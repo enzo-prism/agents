@@ -10,9 +10,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Agent Playground",
-  description:
-    "Minimal internal workspace for live-testing client ElevenLabs agents.",
+  title: "Agent QA",
+  description: "Live client agent testing.",
 };
 
 export default function RootLayout({

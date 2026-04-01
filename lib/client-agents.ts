@@ -1,7 +1,7 @@
 export type ClientAgent = {
   slug: "njo" | "wong" | "norodovich";
   name: string;
-  summary: string;
+  summary?: string;
   envKey: string;
   agentId?: string;
   accent: string;
@@ -18,7 +18,6 @@ export const clientAgents = [
   {
     slug: "njo",
     name: "Njo",
-    summary: "Live voice QA.",
     envKey: "NEXT_PUBLIC_ELEVENLABS_AGENT_ID_NJO",
     agentId:
       cleanValue(process.env.NEXT_PUBLIC_ELEVENLABS_AGENT_ID_NJO) ??
@@ -30,7 +29,6 @@ export const clientAgents = [
   {
     slug: "wong",
     name: "Wong",
-    summary: "Live voice QA.",
     envKey: "NEXT_PUBLIC_ELEVENLABS_AGENT_ID_WONG",
     agentId:
       cleanValue(process.env.NEXT_PUBLIC_ELEVENLABS_AGENT_ID_WONG) ??
@@ -42,7 +40,6 @@ export const clientAgents = [
   {
     slug: "norodovich",
     name: "Norodovich",
-    summary: "Live voice QA.",
     envKey: "NEXT_PUBLIC_ELEVENLABS_AGENT_ID_NORODOVICH",
     agentId:
       cleanValue(process.env.NEXT_PUBLIC_ELEVENLABS_AGENT_ID_NORODOVICH) ??

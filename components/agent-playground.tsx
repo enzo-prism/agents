@@ -2,7 +2,7 @@
 
 import type { CSSProperties } from "react";
 import { useState } from "react";
-import { ArrowUpRight, CheckCircle2, ChevronDown, Mic2 } from "lucide-react";
+import { CheckCircle2, ChevronDown, Mic2 } from "lucide-react";
 
 import { buttonVariants } from "@/components/ui/button";
 import {
@@ -92,10 +92,7 @@ export function AgentPlayground({ clients }: AgentPlaygroundProps) {
             )}
           >
             <div className="min-w-0">
-              <div className="font-mono text-[11px] uppercase tracking-[0.26em] text-muted-foreground">
-                Agent QA
-              </div>
-              <div className="mt-1 truncate text-sm font-medium tracking-tight text-foreground">
+              <div className="truncate text-sm font-medium tracking-tight text-foreground">
                 {activeClient.name}
               </div>
             </div>
@@ -201,12 +198,6 @@ export function AgentPlayground({ clients }: AgentPlaygroundProps) {
                   {configuredCount} live
                 </div>
               </div>
-
-              <div className="space-y-3">
-                <h1 className="max-w-[10ch] text-pretty text-[2rem] font-medium tracking-tight text-foreground sm:text-[2.35rem]">
-                  Agent QA
-                </h1>
-              </div>
             </div>
 
             <TabsList
@@ -276,28 +267,15 @@ export function AgentPlayground({ clients }: AgentPlaygroundProps) {
                     "animate-in fade-in-0 slide-in-from-bottom-3 flex w-full flex-col px-4 py-4 duration-500 sm:px-6 sm:py-6 lg:min-h-[calc(100svh-3rem)] lg:flex-1 lg:px-8 lg:py-8",
                   )}
                 >
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="space-y-3">
-                      <div className="font-mono text-[11px] uppercase tracking-[0.26em] text-muted-foreground">
-                        Live
-                      </div>
-                      <h2 className="max-w-[8ch] text-pretty text-[2rem] font-medium tracking-tight text-foreground sm:text-[2.75rem]">
-                        {client.name}
-                      </h2>
+                  <div className="space-y-3">
+                    <h2 className="max-w-[8ch] text-pretty text-[2rem] font-medium tracking-tight text-foreground sm:text-[2.75rem]">
+                      {client.name}
+                    </h2>
+                    {client.summary ? (
                       <p className="max-w-xl text-sm leading-7 text-muted-foreground sm:text-base">
                         {client.summary}
                       </p>
-                    </div>
-
-                    <a
-                      className="inline-flex shrink-0 items-center gap-2 rounded-full border border-black/[0.08] bg-white/78 px-3 py-1.5 text-sm font-medium text-foreground transition-opacity hover:opacity-70"
-                      href="https://elevenlabs.io/docs/eleven-agents/customization/widget"
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      Docs
-                      <ArrowUpRight className="size-4" />
-                    </a>
+                    ) : null}
                   </div>
 
                   <div className="mt-6 flex-1 lg:mt-8">

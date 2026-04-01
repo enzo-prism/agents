@@ -31,6 +31,7 @@ between live voice agents during review.
 - `Inter` typography with Apple system fallbacks
 - `lucide-react` icons
 - ElevenLabs `convai-widget-embed`
+- Vercel Web Analytics
 
 ## Local development
 
@@ -115,7 +116,8 @@ Before deploying:
    environment-specific agents.
 2. Add your Vercel domain to the ElevenLabs allowlist for each live agent.
 3. Confirm each agent is public and widget auth is disabled.
-4. Smoke-test both desktop and mobile layouts after deployment.
+4. Vercel Web Analytics is already wired in through `app/layout.tsx`.
+5. Smoke-test both desktop and mobile layouts after deployment.
 
 See the operational checklist in
 [docs/deployment.md](/Users/enzo/agent-playground/docs/deployment.md).

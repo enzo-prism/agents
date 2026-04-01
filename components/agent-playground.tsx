@@ -2,8 +2,16 @@
 
 import type { CSSProperties } from "react";
 import { useState } from "react";
-import { ArrowUpRight, CheckCircle2, Headphones, Mic2 } from "lucide-react";
+import { ArrowUpRight, CheckCircle2, ChevronDown, Mic2 } from "lucide-react";
 
+import { buttonVariants } from "@/components/ui/button";
+import {
+  Popover,
+  PopoverContent,
+  PopoverPortal,
+  PopoverPositioner,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ElevenLabsWidget } from "@/components/elevenlabs-widget";
 import type { ClientAgent } from "@/lib/client-agents";
@@ -32,6 +40,7 @@ export function AgentPlayground({ clients }: AgentPlaygroundProps) {
       ? requestedClient!
       : defaultClient;
   });
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const activeClient =
     clients.find((client) => client.slug === activeValue) ?? clients[0];
@@ -39,6 +48,7 @@ export function AgentPlayground({ clients }: AgentPlaygroundProps) {
 
   const handleValueChange = (value: string) => {
     setActiveValue(value);
+    setMobileMenuOpen(false);
 
     const params = new URLSearchParams(window.location.search);
 
@@ -73,12 +83,113 @@ export function AgentPlayground({ clients }: AgentPlaygroundProps) {
           value={activeClient.slug}
           onValueChange={handleValueChange}
           orientation="vertical"
-          className="grid flex-1 gap-4 lg:grid-cols-[292px_minmax(0,1fr)] lg:gap-6"
+          className="flex flex-1 flex-col gap-4 lg:grid lg:grid-cols-[292px_minmax(0,1fr)] lg:gap-6"
         >
+          <div
+            className={cn(
+              baseSurface,
+              "flex items-center justify-between gap-3 px-3 py-3 lg:hidden",
+            )}
+          >
+            <div className="min-w-0">
+              <div className="font-mono text-[11px] uppercase tracking-[0.26em] text-muted-foreground">
+                Agent QA
+              </div>
+              <div className="mt-1 truncate text-sm font-medium tracking-tight text-foreground">
+                {activeClient.name}
+              </div>
+            </div>
+
+            <Popover
+              open={mobileMenuOpen}
+              onOpenChange={setMobileMenuOpen}
+              modal={false}
+            >
+              <PopoverTrigger
+                className={cn(
+                  buttonVariants({ variant: "outline", size: "sm" }),
+                  "h-10 min-w-[10.25rem] justify-between rounded-full border-black/[0.08] bg-white/90 px-3 shadow-none",
+                )}
+              >
+                <span className="inline-flex min-w-0 items-center gap-2">
+                  <span
+                    aria-hidden
+                    className="size-2 rounded-full"
+                    style={{ background: activeClient.accent }}
+                  />
+                  <span className="truncate text-sm font-medium text-foreground">
+                    {activeClient.name}
+                  </span>
+                </span>
+                <ChevronDown className="size-4 text-muted-foreground" />
+              </PopoverTrigger>
+
+              <PopoverPortal>
+                <PopoverPositioner
+                  side="bottom"
+                  align="end"
+                  className="w-[calc(100vw-2rem)] max-w-sm"
+                >
+                  <PopoverContent className="p-2">
+                    <div className="flex items-center justify-between px-3 py-2">
+                      <div className="font-mono text-[11px] uppercase tracking-[0.24em] text-muted-foreground">
+                        Clients
+                      </div>
+                      <div className="text-[11px] font-medium text-foreground/60">
+                        {configuredCount} live
+                      </div>
+                    </div>
+
+                    <div className="space-y-1">
+                      {clients.map((client, index) => {
+                        const ready = Boolean(client.agentId);
+                        const active = client.slug === activeClient.slug;
+
+                        return (
+                          <button
+                            key={client.slug}
+                            type="button"
+                            onClick={() => handleValueChange(client.slug)}
+                            className={cn(
+                              "flex w-full items-center justify-between rounded-[22px] px-3 py-3 text-left transition-colors",
+                              active
+                                ? "bg-[color:var(--client-accent-soft)] text-foreground"
+                                : "hover:bg-black/[0.03] text-foreground/80",
+                            )}
+                            style={
+                              {
+                                "--client-accent-soft": client.accentSoft,
+                              } as CSSProperties
+                            }
+                          >
+                            <div className="flex min-w-0 items-center gap-3">
+                              <span className="font-mono text-[11px] uppercase tracking-[0.22em] text-muted-foreground">
+                                {String(index + 1).padStart(2, "0")}
+                              </span>
+                              <span className="truncate text-base font-medium tracking-tight text-foreground">
+                                {client.name}
+                              </span>
+                            </div>
+
+                            {ready ? (
+                              <CheckCircle2 className="size-4 text-foreground/70" />
+                            ) : (
+                              <Mic2 className="size-4 text-muted-foreground" />
+                            )}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </PopoverContent>
+                </PopoverPositioner>
+              </PopoverPortal>
+            </Popover>
+          </div>
+
           <aside
             className={cn(
               baseSurface,
-              "flex flex-col gap-8 px-4 py-5 sm:px-5 sm:py-6 lg:sticky lg:top-6 lg:max-h-[calc(100svh-3rem)] lg:overflow-hidden",
+              "hidden flex-col gap-8 px-4 py-5 sm:px-5 sm:py-6 lg:sticky lg:top-6 lg:flex lg:max-h-[calc(100svh-3rem)] lg:overflow-hidden",
             )}
           >
             <div className="space-y-4">
@@ -95,9 +206,6 @@ export function AgentPlayground({ clients }: AgentPlaygroundProps) {
                 <h1 className="max-w-[10ch] text-pretty text-[2rem] font-medium tracking-tight text-foreground sm:text-[2.35rem]">
                   Agent QA
                 </h1>
-                <p className="max-w-[22rem] text-sm leading-7 text-muted-foreground">
-                  Switch. Test. Move on.
-                </p>
               </div>
             </div>
 
@@ -153,20 +261,9 @@ export function AgentPlayground({ clients }: AgentPlaygroundProps) {
                 );
               })}
             </TabsList>
-
-            <div className="space-y-3 border-t border-black/[0.06] pt-5 text-sm text-muted-foreground">
-              <div className="font-medium text-foreground">Local + Vercel</div>
-            </div>
           </aside>
 
           {clients.map((client) => {
-            const panelStyle = {
-              "--client-accent": client.accent,
-              "--client-accent-soft": client.accentSoft,
-            } as CSSProperties;
-
-            const ready = Boolean(client.agentId);
-
             return (
               <TabsContent
                 key={client.slug}
@@ -174,89 +271,38 @@ export function AgentPlayground({ clients }: AgentPlaygroundProps) {
                 className="mt-0 flex outline-none"
               >
                 <section
-                  style={panelStyle}
                   className={cn(
                     baseSurface,
-                    "animate-in fade-in-0 slide-in-from-bottom-3 flex min-h-[calc(100svh-2rem)] flex-1 flex-col px-5 py-5 duration-500 sm:min-h-[calc(100svh-3rem)] sm:px-6 sm:py-6 lg:px-8 lg:py-8",
+                    "animate-in fade-in-0 slide-in-from-bottom-3 flex w-full flex-col px-4 py-4 duration-500 sm:px-6 sm:py-6 lg:min-h-[calc(100svh-3rem)] lg:flex-1 lg:px-8 lg:py-8",
                   )}
                 >
-                  <div className="grid gap-8 xl:grid-cols-[minmax(0,1.05fr)_320px] xl:gap-10">
-                    <div className="space-y-6">
-                      <div className="space-y-3">
-                        <div className="font-mono text-[11px] uppercase tracking-[0.26em] text-muted-foreground">
-                          Live
-                        </div>
-                        <h2 className="max-w-[8ch] text-pretty text-[2.2rem] font-medium tracking-tight text-foreground sm:text-[3rem]">
-                          {client.name}
-                        </h2>
-                        <p className="max-w-2xl text-base leading-8 text-muted-foreground">
-                          {client.summary}
-                        </p>
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="space-y-3">
+                      <div className="font-mono text-[11px] uppercase tracking-[0.26em] text-muted-foreground">
+                        Live
                       </div>
-
-                      <div className="grid gap-3 sm:grid-cols-3">
-                        <div className="rounded-[20px] border border-black/[0.06] bg-background/[0.72] px-4 py-4">
-                          <div className="font-mono text-[11px] uppercase tracking-[0.22em] text-muted-foreground">
-                            View
-                          </div>
-                          <div className="mt-2 text-sm font-medium text-foreground">
-                            Expanded
-                          </div>
-                        </div>
-                        <div className="rounded-[20px] border border-black/[0.06] bg-background/[0.72] px-4 py-4">
-                          <div className="font-mono text-[11px] uppercase tracking-[0.22em] text-muted-foreground">
-                            State
-                          </div>
-                          <div className="mt-2 text-sm font-medium text-foreground">
-                            {ready ? "Ready" : "Pending"}
-                          </div>
-                        </div>
-                        <div className="rounded-[20px] border border-black/[0.06] bg-background/[0.72] px-4 py-4">
-                          <div className="font-mono text-[11px] uppercase tracking-[0.22em] text-muted-foreground">
-                            Key
-                          </div>
-                          <div className="mt-2 truncate text-sm font-medium text-foreground">
-                            {client.envKey}
-                          </div>
-                        </div>
-                      </div>
+                      <h2 className="max-w-[8ch] text-pretty text-[2rem] font-medium tracking-tight text-foreground sm:text-[2.75rem]">
+                        {client.name}
+                      </h2>
+                      <p className="max-w-xl text-sm leading-7 text-muted-foreground sm:text-base">
+                        {client.summary}
+                      </p>
                     </div>
 
-                    <div className="border-t border-black/[0.06] pt-6 xl:border-t-0 xl:border-l xl:pl-8">
-                      <div className="space-y-6 text-sm text-muted-foreground">
-                        <div className="space-y-2">
-                          <div className="font-mono text-[11px] uppercase tracking-[0.24em] text-muted-foreground">
-                            Notes
-                          </div>
-                          <p className="leading-7">Live widget test surface.</p>
-                        </div>
-
-                        <a
-                          className="inline-flex items-center gap-2 font-medium text-foreground transition-opacity hover:opacity-70"
-                          href="https://elevenlabs.io/docs/eleven-agents/customization/widget"
-                          target="_blank"
-                          rel="noreferrer"
-                        >
-                          Docs
-                          <ArrowUpRight className="size-4" />
-                        </a>
-                      </div>
-                    </div>
+                    <a
+                      className="inline-flex shrink-0 items-center gap-2 rounded-full border border-black/[0.08] bg-white/78 px-3 py-1.5 text-sm font-medium text-foreground transition-opacity hover:opacity-70"
+                      href="https://elevenlabs.io/docs/eleven-agents/customization/widget"
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      Docs
+                      <ArrowUpRight className="size-4" />
+                    </a>
                   </div>
 
-                  <div className="mt-8 flex-1">
-                    <div className="h-full min-h-[560px]">
+                  <div className="mt-6 flex-1 lg:mt-8">
+                    <div className="h-full min-h-[240px] sm:min-h-[560px]">
                       <ElevenLabsWidget client={client} />
-                    </div>
-                  </div>
-
-                  <div className="mt-6 flex items-center justify-between gap-4 border-t border-black/[0.06] pt-5 text-sm text-muted-foreground">
-                    <div className="inline-flex items-center gap-2">
-                      <Headphones className="size-4" />
-                      Live test hub.
-                    </div>
-                    <div className="hidden font-mono text-[11px] uppercase tracking-[0.24em] text-muted-foreground sm:block">
-                      {ready ? "Live" : "Placeholder"}
                     </div>
                   </div>
                 </section>

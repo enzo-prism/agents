@@ -52,7 +52,7 @@ export function ElevenLabsWidget({ client }: ElevenLabsWidgetProps) {
   }
 
   return (
-    <div className="relative overflow-hidden rounded-[28px] border border-black/[0.06] bg-white/80">
+    <div className="relative overflow-hidden rounded-[30px] border border-black/[0.06] bg-white/80 shadow-[0_24px_80px_-40px_rgba(15,23,42,0.3)]">
       <div className="pointer-events-none absolute inset-x-0 top-0 z-10 h-16 bg-gradient-to-b from-white/80 to-transparent" />
       <elevenlabs-convai
         key={`${client.slug}-${client.agentId}`}
@@ -64,7 +64,7 @@ export function ElevenLabsWidget({ client }: ElevenLabsWidgetProps) {
         action-text={`Test ${client.name}`}
         start-call-text={`Start ${client.name} session`}
         expand-text={`Open ${client.name}`}
-        className="block h-[560px] w-full"
+        className="block h-[240px] w-full sm:h-[clamp(500px,calc(100svh-17rem),560px)]"
       />
     </div>
   );

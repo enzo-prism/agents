@@ -3,9 +3,9 @@
 Ultra-minimal internal QA app for live-testing multiple client ElevenLabs
 agents from one place.
 
-The app uses a left-rail tab layout, an expanded ElevenLabs widget per client,
-and a lightweight shadcn-style shell so you can switch fast between live voice
-agents during review.
+The app uses a split layout on desktop, a compact selected-agent control on
+mobile, and an expanded ElevenLabs widget per client so you can switch fast
+between live voice agents during review.
 
 ## Current clients
 
@@ -16,7 +16,8 @@ agents during review.
 ## What it does
 
 - Keeps all active client agents in one test surface
-- Opens each client in its own tab
+- Uses a left rail on desktop and a compact mobile selector on smaller screens
+- Opens each client in its own tab state
 - Embeds the official ElevenLabs widget for each agent
 - Supports direct links like `?client=wong`
 - Ships with live fallback agent IDs and optional env overrides
@@ -97,8 +98,9 @@ app/
   layout.tsx                # global layout + ElevenLabs script
   page.tsx                  # app entry
 components/
-  agent-playground.tsx      # shell, tabs, and client panels
+  agent-playground.tsx      # shell, tabs, mobile selector, and client panels
   elevenlabs-widget.tsx     # official widget embed wrapper
+  ui/popover.tsx            # compact mobile client selector
 lib/
   client-agents.ts          # client config, colors, env keys, agent IDs
 ```
@@ -113,6 +115,7 @@ Before deploying:
    environment-specific agents.
 2. Add your Vercel domain to the ElevenLabs allowlist for each live agent.
 3. Confirm each agent is public and widget auth is disabled.
+4. Smoke-test both desktop and mobile layouts after deployment.
 
 See the operational checklist in
 [docs/deployment.md](/Users/enzo/agent-playground/docs/deployment.md).

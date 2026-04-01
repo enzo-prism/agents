@@ -13,6 +13,10 @@
    - `/?client=njo`
    - `/?client=wong`
    - `/?client=norodovich`
+6. Check the responsive shell:
+   - desktop shows the full left navigation rail
+   - mobile shows the compact selected-agent control
+   - changing agents on mobile updates the URL and closes the selector
 
 ## ElevenLabs checklist
 
@@ -53,4 +57,6 @@ Use them if staging, preview, or production should point to different agents.
   `app/layout.tsx`
 - The UI is intentionally minimal so the test surface stays focused on the
   conversation widget itself
+- Mobile navigation is handled through a compact popover selector instead of a
+  persistent sidebar
 - If port `3000` is busy locally, Next.js will move to another port automatically

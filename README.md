@@ -1,36 +1,125 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Agent Playground
 
-## Getting Started
+Ultra-minimal internal QA app for live-testing multiple client ElevenLabs
+agents from one place.
 
-First, run the development server:
+The app uses a left-rail tab layout, an expanded ElevenLabs widget per client,
+and a lightweight shadcn-style shell so you can switch fast between live voice
+agents during review.
+
+## Current clients
+
+- `Njo`
+- `Wong`
+- `Norodovich`
+
+## What it does
+
+- Keeps all active client agents in one test surface
+- Opens each client in its own tab
+- Embeds the official ElevenLabs widget for each agent
+- Supports direct links like `?client=wong`
+- Ships with live fallback agent IDs and optional env overrides
+
+## Stack
+
+- `Next.js 16` App Router
+- `React 19`
+- `Tailwind CSS v4`
+- `shadcn`-style primitives with `@base-ui/react`
+- `Inter` typography with Apple system fallbacks
+- `lucide-react` icons
+- ElevenLabs `convai-widget-embed`
+
+## Local development
+
+1. Install dependencies:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Optionally create local overrides:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+cp .env.example .env.local
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+3. Start the app:
 
-## Learn More
+```bash
+pnpm dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+If port `3000` is already in use, Next.js will automatically move to the next
+available port.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Agent configuration
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+The app works out of the box because all three current clients have built-in
+fallback agent IDs in code.
 
-## Deploy on Vercel
+If you want different agents per environment, set any of these in
+`.env.local` or Vercel project settings:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+NEXT_PUBLIC_ELEVENLABS_AGENT_ID_NJO=your_agent_id
+NEXT_PUBLIC_ELEVENLABS_AGENT_ID_WONG=your_agent_id
+NEXT_PUBLIC_ELEVENLABS_AGENT_ID_NORODOVICH=your_agent_id
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Environment values override the built-in defaults.
+
+## URL behavior
+
+- Default route opens the first client tab
+- `?client=njo` opens Njo
+- `?client=wong` opens Wong
+- `?client=norodovich` opens Norodovich
+
+This makes it easy to bookmark or share a specific test surface.
+
+## ElevenLabs requirements
+
+The current official widget docs require the following for a working embed:
+
+- the agent must be public
+- widget auth must be disabled
+- local and production domains must be allowlisted
+
+Reference:
+[ElevenLabs widget customization docs](https://elevenlabs.io/docs/eleven-agents/customization/widget)
+
+## Project structure
+
+```text
+app/
+  layout.tsx                # global layout + ElevenLabs script
+  page.tsx                  # app entry
+components/
+  agent-playground.tsx      # shell, tabs, and client panels
+  elevenlabs-widget.tsx     # official widget embed wrapper
+lib/
+  client-agents.ts          # client config, colors, env keys, agent IDs
+```
+
+## Deploying to Vercel
+
+This app is ready for a standard Vercel deployment.
+
+Before deploying:
+
+1. Add the `NEXT_PUBLIC_ELEVENLABS_AGENT_ID_*` variables if you want
+   environment-specific agents.
+2. Add your Vercel domain to the ElevenLabs allowlist for each live agent.
+3. Confirm each agent is public and widget auth is disabled.
+
+See the operational checklist in
+[docs/deployment.md](/Users/enzo/agent-playground/docs/deployment.md).
+
+## Scripts
+
+- `pnpm dev` — start local dev server
+- `pnpm build` — production build
+- `pnpm start` — run the production build
+- `pnpm lint` — run ESLint

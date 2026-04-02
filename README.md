@@ -4,19 +4,22 @@ Ultra-minimal internal QA app for live-testing multiple client ElevenLabs
 agents from one place.
 
 The app uses a split layout on desktop, a compact selected-agent control on
-mobile, and an expanded ElevenLabs widget per client so you can switch fast
-between live voice agents during review.
+mobile, a persistent ASCII fire banner at the top, and an expanded ElevenLabs
+widget per client so you can switch fast between live voice agents during
+review.
 
 ## Current clients
 
 - `Dr. Njo`
 - `Dr. Wong`
 - `Dr. Narodovich`
+- `Dr. Chuang`
 
 ## What it does
 
 - Keeps all active client agents in one test surface
 - Uses a left rail on desktop and a compact mobile selector on smaller screens
+- Keeps the ASCII fire banner visible at the top of the app
 - Opens each client in its own tab state
 - Embeds the official ElevenLabs widget for each agent
 - Supports direct links like `?client=wong`
@@ -58,7 +61,7 @@ available port.
 
 ## Agent configuration
 
-The app works out of the box because all three current clients have built-in
+The app works out of the box because all four current clients have built-in
 fallback agent IDs in code.
 
 If you want different agents per environment, set any of these in
@@ -68,6 +71,7 @@ If you want different agents per environment, set any of these in
 NEXT_PUBLIC_ELEVENLABS_AGENT_ID_NJO=your_agent_id
 NEXT_PUBLIC_ELEVENLABS_AGENT_ID_WONG=your_agent_id
 NEXT_PUBLIC_ELEVENLABS_AGENT_ID_NORODOVICH=your_agent_id
+NEXT_PUBLIC_ELEVENLABS_AGENT_ID_CHUANG=your_agent_id
 ```
 
 Environment values override the built-in defaults.
@@ -78,6 +82,7 @@ Environment values override the built-in defaults.
 - `?client=njo` opens Dr. Njo
 - `?client=wong` opens Dr. Wong
 - `?client=norodovich` opens Dr. Narodovich
+- `?client=chuang` opens Dr. Chuang
 
 This makes it easy to bookmark or share a specific test surface.
 
@@ -99,7 +104,9 @@ app/
   layout.tsx                # global layout + ElevenLabs script
   page.tsx                  # app entry
 components/
+  ASCIIAnimation.tsx        # staged ASCII Gen animation player
   agent-playground.tsx      # shell, tabs, mobile selector, and client panels
+  ascii-fire-banner.tsx     # persistent top fire banner
   elevenlabs-widget.tsx     # official widget embed wrapper
   ui/popover.tsx            # compact mobile client selector
 lib/

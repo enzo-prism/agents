@@ -2,7 +2,7 @@
 
 import type { CSSProperties } from "react";
 import { useState } from "react";
-import { CheckCircle2, ChevronDown, Mic2 } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 
 import { buttonVariants } from "@/components/ui/button";
 import {
@@ -12,6 +12,7 @@ import {
   PopoverPositioner,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { AsciiFireBanner } from "@/components/ascii-fire-banner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ElevenLabsWidget } from "@/components/elevenlabs-widget";
 import type { ClientAgent } from "@/lib/client-agents";
@@ -44,7 +45,6 @@ export function AgentPlayground({ clients }: AgentPlaygroundProps) {
 
   const activeClient =
     clients.find((client) => client.slug === activeValue) ?? clients[0];
-  const configuredCount = clients.filter((client) => Boolean(client.agentId)).length;
 
   const handleValueChange = (value: string) => {
     setActiveValue(value);
@@ -78,7 +78,9 @@ export function AgentPlayground({ clients }: AgentPlaygroundProps) {
         className="pointer-events-none absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.84),rgba(245,244,239,0.68))]"
       />
 
-      <main className="relative mx-auto flex min-h-svh w-full max-w-[1600px] flex-col px-4 py-4 sm:px-6 sm:py-6 lg:px-8">
+      <main className="relative mx-auto flex min-h-svh w-full max-w-[1600px] flex-col gap-4 px-4 py-4 sm:gap-6 sm:px-6 sm:py-6 lg:px-8">
+        <AsciiFireBanner className="shrink-0" />
+
         <Tabs
           value={activeClient.slug}
           onValueChange={handleValueChange}
@@ -128,18 +130,14 @@ export function AgentPlayground({ clients }: AgentPlaygroundProps) {
                   className="w-[calc(100vw-2rem)] max-w-sm"
                 >
                   <PopoverContent className="p-2">
-                    <div className="flex items-center justify-between px-3 py-2">
+                    <div className="px-3 py-2">
                       <div className="font-mono text-[11px] uppercase tracking-[0.24em] text-muted-foreground">
                         Client Agents
-                      </div>
-                      <div className="text-[11px] font-medium text-foreground/60">
-                        {configuredCount} live
                       </div>
                     </div>
 
                     <div className="space-y-1">
-                      {clients.map((client, index) => {
-                        const ready = Boolean(client.agentId);
+                      {clients.map((client) => {
                         const active = client.slug === activeClient.slug;
 
                         return (
@@ -159,20 +157,9 @@ export function AgentPlayground({ clients }: AgentPlaygroundProps) {
                               } as CSSProperties
                             }
                           >
-                            <div className="flex min-w-0 items-center gap-3">
-                              <span className="font-mono text-[11px] uppercase tracking-[0.22em] text-muted-foreground">
-                                {String(index + 1).padStart(2, "0")}
-                              </span>
-                              <span className="truncate text-base font-medium tracking-tight text-foreground">
-                                {client.name}
-                              </span>
-                            </div>
-
-                            {ready ? (
-                              <CheckCircle2 className="size-4 text-foreground/70" />
-                            ) : (
-                              <Mic2 className="size-4 text-muted-foreground" />
-                            )}
+                            <span className="truncate text-base font-medium tracking-tight text-foreground">
+                              {client.name}
+                            </span>
                           </button>
                         );
                       })}
@@ -186,17 +173,12 @@ export function AgentPlayground({ clients }: AgentPlaygroundProps) {
           <aside
             className={cn(
               baseSurface,
-              "hidden flex-col gap-8 px-4 py-5 sm:px-5 sm:py-6 lg:sticky lg:top-6 lg:flex lg:max-h-[calc(100svh-3rem)] lg:overflow-hidden",
+              "hidden flex-col gap-8 px-4 py-5 sm:px-5 sm:py-6 lg:flex lg:self-start",
             )}
           >
             <div className="space-y-4">
-              <div className="flex items-center justify-between gap-3">
-                <div className="font-mono text-[11px] uppercase tracking-[0.26em] text-muted-foreground">
-                  Agents
-                </div>
-                <div className="rounded-full border border-black/[0.08] bg-background/80 px-2.5 py-1 text-[11px] font-medium text-foreground/70">
-                  {configuredCount} live
-                </div>
+              <div className="font-mono text-[11px] uppercase tracking-[0.26em] text-muted-foreground">
+                Agents
               </div>
             </div>
 
@@ -204,9 +186,7 @@ export function AgentPlayground({ clients }: AgentPlaygroundProps) {
               variant="line"
               className="grid w-full gap-2 bg-transparent p-0"
             >
-              {clients.map((client, index) => {
-                const ready = Boolean(client.agentId);
-
+              {clients.map((client) => {
                 return (
                   <TabsTrigger
                     key={client.slug}
@@ -217,36 +197,8 @@ export function AgentPlayground({ clients }: AgentPlaygroundProps) {
                       "data-active:border-black/10 data-active:bg-white data-active:shadow-[0_18px_45px_-30px_rgba(15,23,42,0.35)]",
                     )}
                   >
-                    <div className="flex w-full items-start justify-between gap-4 px-4 py-4">
-                      <div className="space-y-2">
-                        <div className="font-mono text-[11px] uppercase tracking-[0.26em] text-muted-foreground transition-colors group-data-active:text-foreground/70">
-                          {String(index + 1).padStart(2, "0")}
-                        </div>
-                        <div className="text-lg font-medium tracking-tight text-foreground">
-                          {client.name}
-                        </div>
-                      </div>
-
-                      <div
-                        className={cn(
-                          "mt-1 inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-medium transition-colors",
-                          ready
-                            ? "bg-[color:var(--client-accent-soft)] text-foreground"
-                            : "bg-muted text-muted-foreground",
-                        )}
-                        style={
-                          {
-                            "--client-accent-soft": client.accentSoft,
-                          } as CSSProperties
-                        }
-                      >
-                        {ready ? (
-                          <CheckCircle2 className="size-3.5" />
-                        ) : (
-                          <Mic2 className="size-3.5" />
-                        )}
-                        {ready ? "Ready" : "Pending"}
-                      </div>
+                    <div className="px-4 py-4 text-lg font-medium tracking-tight text-foreground">
+                      {client.name}
                     </div>
                   </TabsTrigger>
                 );
@@ -259,16 +211,16 @@ export function AgentPlayground({ clients }: AgentPlaygroundProps) {
               <TabsContent
                 key={client.slug}
                 value={client.slug}
-                className="mt-0 flex outline-none"
+                className="mt-0 flex min-h-0 outline-none"
               >
                 <section
                   className={cn(
                     baseSurface,
-                    "animate-in fade-in-0 slide-in-from-bottom-3 flex w-full flex-col px-4 py-4 duration-500 sm:px-6 sm:py-6 lg:min-h-[calc(100svh-3rem)] lg:flex-1 lg:px-8 lg:py-8",
+                    "animate-in fade-in-0 slide-in-from-bottom-3 flex w-full flex-col px-4 py-4 duration-500 sm:px-6 sm:py-6 lg:flex-1 lg:px-8 lg:py-8",
                   )}
                 >
                   <div className="space-y-3">
-                    <h2 className="max-w-[8ch] text-pretty text-[2rem] font-medium tracking-tight text-foreground sm:text-[2.75rem]">
+                    <h2 className="max-w-full whitespace-nowrap text-[clamp(2rem,8vw,4.5rem)] leading-[0.92] font-medium tracking-[-0.05em] text-foreground">
                       {client.name}
                     </h2>
                     {client.summary ? (

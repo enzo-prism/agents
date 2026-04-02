@@ -9,11 +9,14 @@
    - `Dr. Njo`
    - `Dr. Wong`
    - `Dr. Narodovich`
+   - `Dr. Chuang`
 5. Test direct routing if needed:
    - `/?client=njo`
    - `/?client=wong`
    - `/?client=norodovich`
+   - `/?client=chuang`
 6. Check the responsive shell:
+   - the ASCII fire banner is visible at the top
    - desktop shows the full left navigation rail
    - mobile shows the compact selected-agent control
    - changing agents on mobile updates the URL and closes the selector
@@ -38,6 +41,7 @@ These are optional because the app already includes live fallback IDs:
 NEXT_PUBLIC_ELEVENLABS_AGENT_ID_NJO=
 NEXT_PUBLIC_ELEVENLABS_AGENT_ID_WONG=
 NEXT_PUBLIC_ELEVENLABS_AGENT_ID_NORODOVICH=
+NEXT_PUBLIC_ELEVENLABS_AGENT_ID_CHUANG=
 ```
 
 Use them if staging, preview, or production should point to different agents.
@@ -50,7 +54,7 @@ Use them if staging, preview, or production should point to different agents.
 4. Deploy
 5. Visit the live site once after deployment so Vercel Web Analytics can begin collecting page views
 6. Add the final preview and production domains to ElevenLabs allowlists
-7. Re-test all three widgets after deployment
+7. Re-test all four widgets after deployment
 
 ## Notes
 

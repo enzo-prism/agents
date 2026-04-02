@@ -2,7 +2,7 @@
 
 import type { CSSProperties } from "react";
 import { useState } from "react";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, ListChecks } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import { buttonVariants } from "@/components/ui/button";
@@ -16,6 +16,7 @@ import {
 import { AsciiFireBanner } from "@/components/ascii-fire-banner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ElevenLabsWidget } from "@/components/elevenlabs-widget";
+import { AgentCapabilities } from "@/components/agent-capabilities";
 import type { ClientAgent, ClientSlug } from "@/lib/client-agents";
 import { cn } from "@/lib/utils";
 
@@ -35,6 +36,7 @@ export function AgentPlayground({
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mobileChecklistOpen, setMobileChecklistOpen] = useState(false);
   const requestedClient = searchParams.get("client");
   const activeValue = clients.some((client) => client.slug === requestedClient)
     ? (requestedClient as ClientSlug)
@@ -45,6 +47,7 @@ export function AgentPlayground({
 
   const handleValueChange = (value: string) => {
     setMobileMenuOpen(false);
+    setMobileChecklistOpen(false);
 
     const params = new URLSearchParams(searchParams.toString());
 
@@ -81,14 +84,50 @@ export function AgentPlayground({
           value={activeClient.slug}
           onValueChange={handleValueChange}
           orientation="vertical"
-          className="flex flex-1 flex-col gap-4 lg:grid lg:grid-cols-[292px_minmax(0,1fr)] lg:gap-6"
+          className="flex flex-1 flex-col gap-4 lg:grid lg:grid-cols-[320px_minmax(0,1fr)] lg:gap-6"
         >
           <div
             className={cn(
               baseSurface,
-              "flex items-center justify-end px-2 py-2 lg:hidden",
+              "flex items-center justify-between gap-2 px-2 py-2 lg:hidden",
             )}
           >
+            <Popover
+              open={mobileChecklistOpen}
+              onOpenChange={setMobileChecklistOpen}
+              modal={false}
+            >
+              <PopoverTrigger
+                className={cn(
+                  buttonVariants({ variant: "outline", size: "sm" }),
+                  "h-10 rounded-full border-black/[0.08] bg-white/90 px-3 shadow-none",
+                )}
+              >
+                <span className="inline-flex items-center gap-2">
+                  <ListChecks className="size-4 text-muted-foreground" />
+                  <span className="text-sm font-medium text-foreground">
+                    Checklist
+                  </span>
+                </span>
+              </PopoverTrigger>
+
+              <PopoverPortal>
+                <PopoverPositioner
+                  side="bottom"
+                  align="start"
+                  className="w-[calc(100vw-2rem)] max-w-sm"
+                >
+                  <PopoverContent className="p-2">
+                    <AgentCapabilities
+                      client={activeClient}
+                      variant="popover"
+                      className="border-0 bg-transparent p-2 shadow-none"
+                    />
+                  </PopoverContent>
+                </PopoverPositioner>
+              </PopoverPortal>
+            </Popover>
+
             <Popover
               open={mobileMenuOpen}
               onOpenChange={setMobileMenuOpen}
@@ -163,7 +202,7 @@ export function AgentPlayground({
           <aside
             className={cn(
               baseSurface,
-              "hidden flex-col gap-8 px-4 py-5 sm:px-5 sm:py-6 lg:flex lg:self-start",
+              "hidden px-4 py-5 sm:px-5 sm:py-6 lg:sticky lg:top-8 lg:flex lg:max-h-[calc(100svh-4rem)] lg:self-start lg:overflow-hidden",
             )}
           >
             <div className="space-y-4">
@@ -172,28 +211,32 @@ export function AgentPlayground({
               </div>
             </div>
 
-            <TabsList
-              variant="line"
-              className="grid w-full gap-2 bg-transparent p-0"
-            >
-              {clients.map((client) => {
-                return (
-                  <TabsTrigger
-                    key={client.slug}
-                    value={client.slug}
-                    className={cn(
-                      "group h-auto rounded-[24px] border border-transparent px-0 py-0 text-left text-foreground/80 transition duration-300 after:hidden",
-                      "hover:border-black/[0.08] hover:bg-white/80 hover:text-foreground",
-                      "data-active:border-black/10 data-active:bg-white data-active:shadow-[0_18px_45px_-30px_rgba(15,23,42,0.35)]",
-                    )}
-                  >
-                    <div className="px-4 py-4 text-lg font-medium tracking-tight text-foreground">
-                      {client.name}
-                    </div>
-                  </TabsTrigger>
-                );
-              })}
-            </TabsList>
+            <div className="min-h-0 space-y-3 overflow-y-auto pr-1">
+              <TabsList
+                variant="line"
+                className="grid w-full gap-2 bg-transparent p-0"
+              >
+                {clients.map((client) => {
+                  return (
+                    <TabsTrigger
+                      key={client.slug}
+                      value={client.slug}
+                      className={cn(
+                        "group h-auto rounded-[24px] border border-transparent px-0 py-0 text-left text-foreground/80 transition duration-300 after:hidden",
+                        "hover:border-black/[0.08] hover:bg-white/80 hover:text-foreground",
+                        "data-active:border-black/10 data-active:bg-white data-active:shadow-[0_18px_45px_-30px_rgba(15,23,42,0.35)]",
+                      )}
+                    >
+                      <div className="px-4 py-4 text-lg font-medium tracking-tight text-foreground">
+                        {client.name}
+                      </div>
+                    </TabsTrigger>
+                  );
+                })}
+              </TabsList>
+
+              <AgentCapabilities client={activeClient} variant="rail" />
+            </div>
           </aside>
 
           {clients.map((client) => {
@@ -209,7 +252,7 @@ export function AgentPlayground({
                     "animate-in fade-in-0 slide-in-from-bottom-3 flex w-full flex-col px-4 py-4 duration-500 sm:px-6 sm:py-6 lg:flex-1 lg:px-8 lg:py-8",
                   )}
                 >
-                  <div className="flex-1">
+                  <div className="min-w-0">
                     <div className="h-full min-h-[240px] sm:min-h-[560px]">
                       <ElevenLabsWidget client={client} />
                     </div>

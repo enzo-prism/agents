@@ -18,8 +18,11 @@
 6. Check the responsive shell:
    - the ASCII fire banner is visible at the top
    - desktop shows the full left navigation rail
-   - mobile shows the compact selected-agent control
+   - desktop keeps the `What to test` panel in the left rail, not the widget canvas
+   - mobile shows both the compact client selector and the `Checklist` control
+   - opening the mobile checklist does not cover or clip the widget by default
    - changing agents on mobile updates the URL and closes the selector
+   - the main panel stays widget-only across breakpoints
 
 ## ElevenLabs checklist
 
@@ -64,6 +67,7 @@ Use them if staging, preview, or production should point to different agents.
   `@vercel/analytics/next`
 - The UI is intentionally minimal so the test surface stays focused on the
   conversation widget itself
-- Mobile navigation is handled through a compact popover selector instead of a
-  persistent sidebar
+- Desktop guidance lives in the left rail to avoid widget overlap
+- Mobile guidance is intentionally on-demand through the `Checklist` popover
+- The selected client must continue to hydrate correctly from `?client=...`
 - If port `3000` is busy locally, Next.js will move to another port automatically

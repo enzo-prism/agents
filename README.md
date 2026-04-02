@@ -21,6 +21,8 @@ review.
 - Uses a left rail on desktop and a compact mobile selector on smaller screens
 - Keeps the ASCII fire banner visible at the top of the app
 - Opens each client in its own tab state
+- Shows client-specific “what to test” prompts in the left rail on desktop
+- Shows those prompts behind a compact `Checklist` control on mobile
 - Embeds the official ElevenLabs widget for each agent
 - Supports direct links like `?client=wong`
 - Ships with live fallback agent IDs and optional env overrides
@@ -105,7 +107,8 @@ app/
   page.tsx                  # app entry
 components/
   ASCIIAnimation.tsx        # staged ASCII Gen animation player
-  agent-playground.tsx      # shell, tabs, mobile selector, and client panels
+  agent-capabilities.tsx    # desktop rail + mobile popover checklist surfaces
+  agent-playground.tsx      # shell, routing, desktop rail, and mobile controls
   ascii-fire-banner.tsx     # persistent top fire banner
   elevenlabs-widget.tsx     # official widget embed wrapper
   ui/popover.tsx            # compact mobile client selector
@@ -128,6 +131,9 @@ Before deploying:
 
 See the operational checklist in
 [docs/deployment.md](/Users/enzo/agent-playground/docs/deployment.md).
+
+For future UI work and Codex context, see
+[docs/codex-handoff.md](/Users/enzo/agent-playground/docs/codex-handoff.md).
 
 ## Scripts
 

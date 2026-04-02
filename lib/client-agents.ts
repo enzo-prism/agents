@@ -1,3 +1,22 @@
+export type ClientCapabilityIcon =
+  | "book"
+  | "briefcase"
+  | "calendar"
+  | "clock"
+  | "map-pin"
+  | "presentation"
+  | "shield"
+  | "stethoscope"
+  | "user"
+  | "users"
+  | "wallet";
+
+export type ClientCapability = {
+  icon: ClientCapabilityIcon;
+  title: string;
+  description: string;
+};
+
 export type ClientAgent = {
   slug: "njo" | "wong" | "norodovich" | "chuang";
   name: string;
@@ -7,6 +26,7 @@ export type ClientAgent = {
   accent: string;
   accentSoft: string;
   orbColors: [string, string];
+  capabilities: readonly ClientCapability[];
 };
 
 export type ClientSlug = ClientAgent["slug"];
@@ -28,6 +48,33 @@ export const clientAgents = [
     accent: "#23574b",
     accentSoft: "rgba(35, 87, 75, 0.14)",
     orbColors: ["#23574b", "#9ed9ca"],
+    capabilities: [
+      {
+        icon: "calendar",
+        title: "Book a meeting",
+        description: "Share the meeting link and next step.",
+      },
+      {
+        icon: "book",
+        title: "Book insights",
+        description: "Pull key ideas and useful takeaways.",
+      },
+      {
+        icon: "briefcase",
+        title: "Who he helps",
+        description: "Explain the leaders and teams he works with.",
+      },
+      {
+        icon: "presentation",
+        title: "Advisory formats",
+        description: "Outline talks, workshops, and consulting options.",
+      },
+      {
+        icon: "user",
+        title: "Background",
+        description: "Summarize his story and point of view.",
+      },
+    ],
   },
   {
     slug: "wong",
@@ -39,6 +86,33 @@ export const clientAgents = [
     accent: "#3558b1",
     accentSoft: "rgba(53, 88, 177, 0.14)",
     orbColors: ["#3558b1", "#c6d4ff"],
+    capabilities: [
+      {
+        icon: "calendar",
+        title: "Book appointment",
+        description: "Route patients to the right visit type.",
+      },
+      {
+        icon: "clock",
+        title: "Hours and access",
+        description: "Share office hours and how to reach the practice.",
+      },
+      {
+        icon: "stethoscope",
+        title: "Services",
+        description: "Explain care options and what each visit covers.",
+      },
+      {
+        icon: "shield",
+        title: "Insurance",
+        description: "Cover insurance, self-pay, and financing basics.",
+      },
+      {
+        icon: "users",
+        title: "Meet the team",
+        description: "Introduce the doctor, team, and patient experience.",
+      },
+    ],
   },
   {
     slug: "norodovich",
@@ -50,6 +124,33 @@ export const clientAgents = [
     accent: "#6d5231",
     accentSoft: "rgba(109, 82, 49, 0.14)",
     orbColors: ["#6d5231", "#edd4b3"],
+    capabilities: [
+      {
+        icon: "calendar",
+        title: "Book consult",
+        description: "Help patients start with the right consult.",
+      },
+      {
+        icon: "clock",
+        title: "Availability",
+        description: "Explain open hours and best booking windows.",
+      },
+      {
+        icon: "stethoscope",
+        title: "Care options",
+        description: "Clarify treatments, fit, and next steps.",
+      },
+      {
+        icon: "wallet",
+        title: "Investment",
+        description: "Discuss financing, payment plans, and fees.",
+      },
+      {
+        icon: "user",
+        title: "Practice story",
+        description: "Share the doctor background and practice approach.",
+      },
+    ],
   },
   {
     slug: "chuang",
@@ -61,6 +162,33 @@ export const clientAgents = [
     accent: "#7b2f7d",
     accentSoft: "rgba(123, 47, 125, 0.14)",
     orbColors: ["#7b2f7d", "#e7b6ea"],
+    capabilities: [
+      {
+        icon: "calendar",
+        title: "Book visit",
+        description: "Guide people to the right appointment type.",
+      },
+      {
+        icon: "map-pin",
+        title: "Office details",
+        description: "Share location, hours, and contact details.",
+      },
+      {
+        icon: "stethoscope",
+        title: "Service offering",
+        description: "Explain available care and what happens next.",
+      },
+      {
+        icon: "shield",
+        title: "Payment options",
+        description: "Cover insurance, financing, and self-pay paths.",
+      },
+      {
+        icon: "users",
+        title: "About the practice",
+        description: "Introduce the doctor, team, and care style.",
+      },
+    ],
   },
 ] as const satisfies readonly ClientAgent[];
 

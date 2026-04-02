@@ -192,7 +192,7 @@ export function AgentPlayground({ clients }: AgentPlaygroundProps) {
             <div className="space-y-4">
               <div className="flex items-center justify-between gap-3">
                 <div className="font-mono text-[11px] uppercase tracking-[0.26em] text-muted-foreground">
-                  Playground
+                  Agents
                 </div>
                 <div className="rounded-full border border-black/[0.08] bg-background/80 px-2.5 py-1 text-[11px] font-medium text-foreground/70">
                   {configuredCount} live

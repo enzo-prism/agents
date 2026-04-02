@@ -14,6 +14,7 @@ review.
 - `Dr. Wong`
 - `Dr. Narodovich`
 - `Dr. Chuang`
+- `Dr. Aguil`
 
 ## What it does
 
@@ -63,7 +64,7 @@ available port.
 
 ## Agent configuration
 
-The app works out of the box because all four current clients have built-in
+The app works out of the box because all five current clients have built-in
 fallback agent IDs in code.
 
 If you want different agents per environment, set any of these in
@@ -74,6 +75,7 @@ NEXT_PUBLIC_ELEVENLABS_AGENT_ID_NJO=your_agent_id
 NEXT_PUBLIC_ELEVENLABS_AGENT_ID_WONG=your_agent_id
 NEXT_PUBLIC_ELEVENLABS_AGENT_ID_NORODOVICH=your_agent_id
 NEXT_PUBLIC_ELEVENLABS_AGENT_ID_CHUANG=your_agent_id
+NEXT_PUBLIC_ELEVENLABS_AGENT_ID_AGUIL=your_agent_id
 ```
 
 Environment values override the built-in defaults.
@@ -85,6 +87,7 @@ Environment values override the built-in defaults.
 - `?client=wong` opens Dr. Wong
 - `?client=norodovich` opens Dr. Narodovich
 - `?client=chuang` opens Dr. Chuang
+- `?client=aguil` opens Dr. Aguil
 
 This makes it easy to bookmark or share a specific test surface.
 

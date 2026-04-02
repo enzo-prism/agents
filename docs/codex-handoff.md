@@ -153,6 +153,7 @@ Verify:
 - `/?client=wong`
 - `/?client=norodovich`
 - `/?client=chuang`
+- `/?client=aguil`
 
 ## ElevenLabs notes
 

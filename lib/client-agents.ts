@@ -18,7 +18,7 @@ export type ClientCapability = {
 };
 
 export type ClientAgent = {
-  slug: "njo" | "wong" | "norodovich" | "chuang";
+  slug: "njo" | "wong" | "norodovich" | "chuang" | "aguil";
   name: string;
   summary?: string;
   envKey: string;
@@ -36,6 +36,7 @@ const NJO_AGENT_ID = "agent_2901kn4t3ab6eycswyjbf82tqyxv";
 const WONG_AGENT_ID = "agent_6401kmp8pjw0fc48j493nzkybmr0";
 const NORODOVICH_AGENT_ID = "agent_6301kn20gh9denavkvn1bg9krf54";
 const CHUANG_AGENT_ID = "agent_4801kn7ednjse6drbr2cnt62kkp2";
+const AGUIL_AGENT_ID = "agent_4901kn7nwpsse569ce7dp27aze8g";
 
 export const clientAgents = [
   {
@@ -187,6 +188,44 @@ export const clientAgents = [
         icon: "users",
         title: "About the practice",
         description: "Introduce the doctor, team, and care style.",
+      },
+    ],
+  },
+  {
+    slug: "aguil",
+    name: "Dr. Aguil",
+    envKey: "NEXT_PUBLIC_ELEVENLABS_AGENT_ID_AGUIL",
+    agentId:
+      cleanValue(process.env.NEXT_PUBLIC_ELEVENLABS_AGENT_ID_AGUIL) ??
+      AGUIL_AGENT_ID,
+    accent: "#8a5f2d",
+    accentSoft: "rgba(138, 95, 45, 0.14)",
+    orbColors: ["#8a5f2d", "#f1d1a5"],
+    capabilities: [
+      {
+        icon: "calendar",
+        title: "Book consult",
+        description: "Route patients into the right cosmetic consult.",
+      },
+      {
+        icon: "stethoscope",
+        title: "Smile services",
+        description: "Cover veneers, implants, whitening, and Invisalign.",
+      },
+      {
+        icon: "map-pin",
+        title: "Office details",
+        description: "Share the Wilshire Blvd location and visit basics.",
+      },
+      {
+        icon: "clock",
+        title: "Hours",
+        description: "Explain the Monday to Thursday office schedule.",
+      },
+      {
+        icon: "shield",
+        title: "Insurance and pay",
+        description: "Discuss insurance support and flexible financing.",
       },
     ],
   },

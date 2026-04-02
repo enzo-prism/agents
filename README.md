@@ -9,9 +9,9 @@ between live voice agents during review.
 
 ## Current clients
 
-- `Njo`
-- `Wong`
-- `Norodovich`
+- `Dr. Njo`
+- `Dr. Wong`
+- `Dr. Narodovich`
 
 ## What it does
 
@@ -75,9 +75,9 @@ Environment values override the built-in defaults.
 ## URL behavior
 
 - Default route opens the first client tab
-- `?client=njo` opens Njo
-- `?client=wong` opens Wong
-- `?client=norodovich` opens Norodovich
+- `?client=njo` opens Dr. Njo
+- `?client=wong` opens Dr. Wong
+- `?client=norodovich` opens Dr. Narodovich
 
 This makes it easy to bookmark or share a specific test surface.
 

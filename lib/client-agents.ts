@@ -17,7 +17,7 @@ const NORODOVICH_AGENT_ID = "agent_6301kn20gh9denavkvn1bg9krf54";
 export const clientAgents = [
   {
     slug: "njo",
-    name: "Njo",
+    name: "Dr. Njo",
     envKey: "NEXT_PUBLIC_ELEVENLABS_AGENT_ID_NJO",
     agentId:
       cleanValue(process.env.NEXT_PUBLIC_ELEVENLABS_AGENT_ID_NJO) ??
@@ -28,7 +28,7 @@ export const clientAgents = [
   },
   {
     slug: "wong",
-    name: "Wong",
+    name: "Dr. Wong",
     envKey: "NEXT_PUBLIC_ELEVENLABS_AGENT_ID_WONG",
     agentId:
       cleanValue(process.env.NEXT_PUBLIC_ELEVENLABS_AGENT_ID_WONG) ??
@@ -39,7 +39,7 @@ export const clientAgents = [
   },
   {
     slug: "norodovich",
-    name: "Norodovich",
+    name: "Dr. Narodovich",
     envKey: "NEXT_PUBLIC_ELEVENLABS_AGENT_ID_NORODOVICH",
     agentId:
       cleanValue(process.env.NEXT_PUBLIC_ELEVENLABS_AGENT_ID_NORODOVICH) ??

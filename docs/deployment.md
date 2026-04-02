@@ -6,9 +6,9 @@
 2. Run `pnpm dev`
 3. Open the local URL printed by Next.js
 4. Verify each tab loads a live widget:
-   - `Njo`
-   - `Wong`
-   - `Norodovich`
+   - `Dr. Njo`
+   - `Dr. Wong`
+   - `Dr. Narodovich`
 5. Test direct routing if needed:
    - `/?client=njo`
    - `/?client=wong`

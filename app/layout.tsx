@@ -10,7 +10,14 @@ const inter = Inter({
   variable: "--font-inter",
 });
 
+const siteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL ??
+  (process.env.VERCEL_PROJECT_PRODUCTION_URL
+    ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+    : "https://agents-omega-ten.vercel.app");
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: "Agent QA",
   description: "Live client agent testing.",
 };

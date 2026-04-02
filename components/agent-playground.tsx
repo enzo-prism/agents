@@ -130,7 +130,7 @@ export function AgentPlayground({ clients }: AgentPlaygroundProps) {
                   <PopoverContent className="p-2">
                     <div className="flex items-center justify-between px-3 py-2">
                       <div className="font-mono text-[11px] uppercase tracking-[0.24em] text-muted-foreground">
-                        Clients
+                        Client Agents
                       </div>
                       <div className="text-[11px] font-medium text-foreground/60">
                         {configuredCount} live

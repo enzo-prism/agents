@@ -1,6 +1,23 @@
 import { AgentPlayground } from "@/components/agent-playground";
-import { clientAgents } from "@/lib/client-agents";
+import { clientAgents, isClientSlug } from "@/lib/client-agents";
 
-export default function Home() {
-  return <AgentPlayground clients={clientAgents} />;
+type HomeProps = {
+  searchParams: Promise<{
+    client?: string | string[];
+  }>;
+};
+
+export default async function Home({ searchParams }: HomeProps) {
+  const params = await searchParams;
+  const requestedClient = Array.isArray(params.client)
+    ? params.client[0]
+    : params.client;
+  const initialClient =
+    requestedClient && isClientSlug(requestedClient)
+      ? requestedClient
+      : clientAgents[0].slug;
+
+  return (
+    <AgentPlayground clients={clientAgents} initialClient={initialClient} />
+  );
 }

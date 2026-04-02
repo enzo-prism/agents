@@ -37,6 +37,9 @@ interface ASCIIAnimationProps {
   gradient?: string
   playOnHover?: boolean
   trimWhitespace?: boolean
+  verticalAlign?: "center" | "bottom"
+  maxScale?: number
+  filter?: string
 }
 
 interface AsciiBounds {
@@ -231,6 +234,9 @@ export default function ASCIIAnimation({
   gradient,
   playOnHover = false,
   trimWhitespace = false,
+  verticalAlign = "center",
+  maxScale = 1,
+  filter,
 }: ASCIIAnimationProps) {
   const [frames, setFrames] = useState<string[]>([])
   const [colorFrames, setColorFrames] = useState<Uint8Array[]>([])
@@ -369,6 +375,7 @@ export default function ASCIIAnimation({
   const currentVisibleTextFrame =
     visibleTextFrames[currentFrame] || visibleTextFrames[0] || ""
   const frameCounterTotal = format === "color" ? (meta?.frameCount || colorFrames.length) : (frames.length || frameCount)
+  const transformOrigin = verticalAlign === "bottom" ? "center bottom" : "center"
 
   useEffect(() => {
     const container = containerRef.current
@@ -382,7 +389,11 @@ export default function ASCIIAnimation({
       const contentHeight = target.scrollHeight || target.clientHeight
       if (!contentWidth || !contentHeight) return
 
-      const nextScale = Math.min(container.clientWidth / contentWidth, container.clientHeight / contentHeight, 1)
+      const nextScale = Math.min(
+        container.clientWidth / contentWidth,
+        container.clientHeight / contentHeight,
+        maxScale
+      )
       setScale(Number.isFinite(nextScale) ? nextScale : 1)
     }
 
@@ -392,12 +403,12 @@ export default function ASCIIAnimation({
     if (preRef.current) observer.observe(preRef.current)
     if (canvasRef.current) observer.observe(canvasRef.current)
     return () => observer.disconnect()
-  }, [currentFrame, currentVisibleTextFrame, format, meta])
+  }, [currentFrame, currentVisibleTextFrame, format, maxScale, meta])
 
   return (
     <div
       ref={containerRef}
-      className={`relative w-full h-full flex items-center justify-center overflow-hidden ${className}`}
+      className={`relative w-full h-full flex ${verticalAlign === "bottom" ? "items-end" : "items-center"} justify-center overflow-hidden ${className}`}
       aria-label={ariaLabel}
       role={ariaLabel ? "img" : undefined}
       onMouseEnter={() => setIsHovered(true)}
@@ -407,8 +418,9 @@ export default function ASCIIAnimation({
         <canvas
           ref={canvasRef}
           style={{
+            filter,
             transform: `scale(${scale})`,
-            transformOrigin: "center",
+            transformOrigin,
           }}
         />
       ) : (
@@ -421,11 +433,12 @@ export default function ASCIIAnimation({
             color,
             backgroundImage: gradient,
             backgroundClip: gradient ? "text" : undefined,
+            filter,
             WebkitBackgroundClip: gradient ? "text" : undefined,
             WebkitTextFillColor: gradient ? "transparent" : undefined,
             fontFamily: FONT_FAMILY,
             transform: `scale(${scale})`,
-            transformOrigin: "center",
+            transformOrigin,
           }}
         >
           {currentVisibleTextFrame}

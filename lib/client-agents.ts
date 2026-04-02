@@ -9,6 +9,8 @@ export type ClientAgent = {
   orbColors: [string, string];
 };
 
+export type ClientSlug = ClientAgent["slug"];
+
 const cleanValue = (value?: string) => value?.trim() || undefined;
 const NJO_AGENT_ID = "agent_2901kn4t3ab6eycswyjbf82tqyxv";
 const WONG_AGENT_ID = "agent_6401kmp8pjw0fc48j493nzkybmr0";
@@ -61,3 +63,7 @@ export const clientAgents = [
     orbColors: ["#7b2f7d", "#e7b6ea"],
   },
 ] as const satisfies readonly ClientAgent[];
+
+export function isClientSlug(value: string): value is ClientSlug {
+  return clientAgents.some((client) => client.slug === value);
+}

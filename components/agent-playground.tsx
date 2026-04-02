@@ -3,6 +3,7 @@
 import type { CSSProperties } from "react";
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import { buttonVariants } from "@/components/ui/button";
 import {
@@ -15,42 +16,37 @@ import {
 import { AsciiFireBanner } from "@/components/ascii-fire-banner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ElevenLabsWidget } from "@/components/elevenlabs-widget";
-import type { ClientAgent } from "@/lib/client-agents";
+import type { ClientAgent, ClientSlug } from "@/lib/client-agents";
 import { cn } from "@/lib/utils";
 
 type AgentPlaygroundProps = {
   clients: readonly ClientAgent[];
+  initialClient: ClientSlug;
 };
 
 const baseSurface =
   "rounded-[32px] border border-black/[0.08] bg-white/[0.68] backdrop-blur-xl";
 
-export function AgentPlayground({ clients }: AgentPlaygroundProps) {
-  const [activeValue, setActiveValue] = useState<string>(() => {
-    const defaultClient = clients[0]?.slug ?? "njo";
-
-    if (typeof window === "undefined") {
-      return defaultClient;
-    }
-
-    const requestedClient = new URLSearchParams(window.location.search).get(
-      "client",
-    );
-
-    return clients.some((client) => client.slug === requestedClient)
-      ? requestedClient!
-      : defaultClient;
-  });
+export function AgentPlayground({
+  clients,
+  initialClient,
+}: AgentPlaygroundProps) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const requestedClient = searchParams.get("client");
+  const activeValue = clients.some((client) => client.slug === requestedClient)
+    ? (requestedClient as ClientSlug)
+    : initialClient;
 
   const activeClient =
     clients.find((client) => client.slug === activeValue) ?? clients[0];
 
   const handleValueChange = (value: string) => {
-    setActiveValue(value);
     setMobileMenuOpen(false);
 
-    const params = new URLSearchParams(window.location.search);
+    const params = new URLSearchParams(searchParams.toString());
 
     if (value === clients[0]?.slug) {
       params.delete("client");
@@ -60,10 +56,10 @@ export function AgentPlayground({ clients }: AgentPlaygroundProps) {
 
     const nextQuery = params.toString();
     const nextUrl = nextQuery
-      ? `${window.location.pathname}?${nextQuery}`
-      : window.location.pathname;
+      ? `${pathname}?${nextQuery}`
+      : pathname;
 
-    window.history.replaceState({}, "", nextUrl);
+    router.replace(nextUrl, { scroll: false });
   };
 
   return (
@@ -90,15 +86,9 @@ export function AgentPlayground({ clients }: AgentPlaygroundProps) {
           <div
             className={cn(
               baseSurface,
-              "flex items-center justify-between gap-3 px-3 py-3 lg:hidden",
+              "flex items-center justify-end px-2 py-2 lg:hidden",
             )}
           >
-            <div className="min-w-0">
-              <div className="truncate text-sm font-medium tracking-tight text-foreground">
-                {activeClient.name}
-              </div>
-            </div>
-
             <Popover
               open={mobileMenuOpen}
               onOpenChange={setMobileMenuOpen}
@@ -219,18 +209,7 @@ export function AgentPlayground({ clients }: AgentPlaygroundProps) {
                     "animate-in fade-in-0 slide-in-from-bottom-3 flex w-full flex-col px-4 py-4 duration-500 sm:px-6 sm:py-6 lg:flex-1 lg:px-8 lg:py-8",
                   )}
                 >
-                  <div className="space-y-3">
-                    <h2 className="max-w-full whitespace-nowrap text-[clamp(2rem,8vw,4.5rem)] leading-[0.92] font-medium tracking-[-0.05em] text-foreground">
-                      {client.name}
-                    </h2>
-                    {client.summary ? (
-                      <p className="max-w-xl text-sm leading-7 text-muted-foreground sm:text-base">
-                        {client.summary}
-                      </p>
-                    ) : null}
-                  </div>
-
-                  <div className="mt-6 flex-1 lg:mt-8">
+                  <div className="flex-1">
                     <div className="h-full min-h-[240px] sm:min-h-[560px]">
                       <ElevenLabsWidget client={client} />
                     </div>

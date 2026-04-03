@@ -32,14 +32,14 @@ export function AsciiFireBanner({ className }: AsciiFireBannerProps) {
         <div className="absolute inset-x-0 bottom-0 h-[214px] sm:h-[242px] lg:h-[286px]">
           <ASCIIAnimation
             frameFolder="animations/fire"
-            quality="high"
-            fps={18}
+            quality="medium"
+            fps={12}
             frameCount={78}
             className="h-full w-full px-2 sm:px-4"
             ariaLabel="Animated ASCII fire"
             gradient="linear-gradient(180deg, #4c2611 0%, #8f4216 16%, #d56a1f 38%, #f59a32 60%, #ffd38a 82%, #fff3d3 100%)"
             filter="drop-shadow(0 18px 24px rgba(255, 147, 61, 0.18))"
-            lazy={false}
+            lazy
             trimWhitespace
             verticalAlign="bottom"
             maxScale={2.35}

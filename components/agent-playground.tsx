@@ -26,7 +26,7 @@ type AgentPlaygroundProps = {
 };
 
 const baseSurface =
-  "rounded-[32px] border border-black/[0.08] bg-white/[0.68] backdrop-blur-xl";
+  "rounded-[32px] border border-black/[0.08] bg-white/[0.78] lg:bg-white/[0.68] lg:backdrop-blur-xl";
 
 export function AgentPlayground({
   clients,
@@ -69,7 +69,7 @@ export function AgentPlayground({
     <div className="relative min-h-svh overflow-x-hidden">
       <div
         aria-hidden
-        className="animate-drift pointer-events-none absolute left-[-8rem] top-[-10rem] size-[24rem] rounded-full blur-3xl"
+        className="pointer-events-none absolute left-[-8rem] top-[-10rem] hidden size-[24rem] rounded-full blur-3xl sm:block sm:animate-drift"
         style={{ background: activeClient.accentSoft }}
       />
       <div

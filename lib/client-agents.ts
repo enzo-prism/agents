@@ -50,44 +50,7 @@ const AGUIL_AGENT_ID = "agent_4901kn7nwpsse569ce7dp27aze8g";
 const JI_AGENT_ID = "agent_4901kn9vshwtfnss5e365h297tve";
 const ANDERSON_AGENT_ID = "agent_7901kn9vfzspeft9fxh46m318760";
 const BANAGA_AGENT_ID = "agent_8801kn9vpzvwfn593sa0c0qn68vq";
-const buildPendingCapabilities = ({
-  intakeTitle,
-  intakeDescription,
-  scopeTitle,
-  scopeDescription,
-}: {
-  intakeTitle: string;
-  intakeDescription: string;
-  scopeTitle: string;
-  scopeDescription: string;
-}) =>
-  [
-    {
-      icon: "shield",
-      title: "Agent hookup",
-      description: "Drop in the ElevenLabs widget ID when it arrives.",
-    },
-    {
-      icon: "book",
-      title: "Website handoff",
-      description: "Attach the live practice site and key conversion pages.",
-    },
-    {
-      icon: "calendar",
-      title: intakeTitle,
-      description: intakeDescription,
-    },
-    {
-      icon: "stethoscope",
-      title: scopeTitle,
-      description: scopeDescription,
-    },
-    {
-      icon: "users",
-      title: "Launch QA",
-      description: "Run desktop, mobile, and routing checks before go-live.",
-    },
-  ] as const satisfies readonly ClientCapability[];
+const CHUN_AGENT_ID = "agent_8501kn9x0tsnf0bsh0ewbhpxjmgy";
 
 const generalDentistCapabilities = [
   {
@@ -145,14 +108,33 @@ const endodontistCapabilities = [
   },
 ] as const satisfies readonly ClientCapability[];
 
-const periodontistPendingCapabilities = buildPendingCapabilities({
-  intakeTitle: "Perio consults",
-  intakeDescription:
-    "Route gum therapy, implant, grafting, and specialist referral calls.",
-  scopeTitle: "Periodontal care",
-  scopeDescription:
-    "Cover gum disease therapy, surgery, grafting, and implant support.",
-});
+const periodontistCapabilities = [
+  {
+    icon: "calendar",
+    title: "Perio consults",
+    description: "Route gum therapy, grafting, implant, and referral visits.",
+  },
+  {
+    icon: "stethoscope",
+    title: "Periodontal care",
+    description: "Cover gum disease therapy, surgery, grafting, and implants.",
+  },
+  {
+    icon: "book",
+    title: "Referral flow",
+    description: "Confirm records, imaging, and specialist handoff steps.",
+  },
+  {
+    icon: "shield",
+    title: "Insurance",
+    description: "Cover specialist billing, benefits, and financing basics.",
+  },
+  {
+    icon: "users",
+    title: "Visit prep",
+    description: "Set expectations for consult timing, sedation, and follow-up.",
+  },
+] as const satisfies readonly ClientCapability[];
 
 export const clientAgents = [
   {
@@ -394,13 +376,16 @@ export const clientAgents = [
   {
     slug: "chun",
     name: "Dr. Chun",
-    summary: "Periodontal agent pending widget handoff.",
+    summary: "Periodontal QA agent.",
+    websiteUrl: "https://www.coastperiodontics.com",
     envKey: "NEXT_PUBLIC_ELEVENLABS_AGENT_ID_CHUN",
-    agentId: cleanValue(process.env.NEXT_PUBLIC_ELEVENLABS_AGENT_ID_CHUN),
+    agentId:
+      cleanValue(process.env.NEXT_PUBLIC_ELEVENLABS_AGENT_ID_CHUN) ??
+      CHUN_AGENT_ID,
     accent: "#3b7a67",
     accentSoft: "rgba(59, 122, 103, 0.14)",
     orbColors: ["#3b7a67", "#c4eadf"],
-    capabilities: periodontistPendingCapabilities,
+    capabilities: periodontistCapabilities,
   },
 ] as const satisfies readonly ClientAgent[];
 

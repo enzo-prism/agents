@@ -100,7 +100,7 @@ Do:
 - `Dr. Ji` - `https://www.tingjenjidds.com` - general dentistry - live widget ID
 - `Dr. Anderson` - `https://www.winecountryrootcanal.com` - endodontics / root canals - live widget ID
 - `Dr. Banaga` - `https://towncentredental.net` - general dentistry - live widget ID
-- `Dr. Chun` - website pending - periodontics
+- `Dr. Chun` - `https://www.coastperiodontics.com` - periodontics - live widget ID
 
 - `components/agent-playground.tsx`
   - responsive layout architecture

@@ -66,7 +66,7 @@ export function AgentPlayground({
   };
 
   return (
-    <div className="relative min-h-svh overflow-hidden">
+    <div className="relative min-h-svh overflow-x-hidden">
       <div
         aria-hidden
         className="animate-drift pointer-events-none absolute left-[-8rem] top-[-10rem] size-[24rem] rounded-full blur-3xl"
@@ -89,7 +89,7 @@ export function AgentPlayground({
           <div
             className={cn(
               baseSurface,
-              "flex items-center justify-between gap-2 px-2 py-2 lg:hidden",
+              "relative z-20 flex items-center justify-between gap-2 px-2 py-2 lg:hidden",
             )}
           >
             <Popover
@@ -244,16 +244,16 @@ export function AgentPlayground({
               <TabsContent
                 key={client.slug}
                 value={client.slug}
-                className="mt-0 flex min-h-0 outline-none"
+                className="relative z-30 mt-0 flex min-h-[calc(100svh-19rem)] outline-none lg:min-h-0"
               >
                 <section
                   className={cn(
-                    baseSurface,
-                    "animate-in fade-in-0 slide-in-from-bottom-3 flex w-full flex-col px-4 py-4 duration-500 sm:px-6 sm:py-6 lg:flex-1 lg:px-8 lg:py-8",
+                    "animate-in fade-in-0 slide-in-from-bottom-3 flex w-full flex-1 overflow-visible duration-500",
+                    "lg:rounded-[32px] lg:border lg:border-black/[0.08] lg:bg-white/[0.68] lg:px-8 lg:py-8 lg:backdrop-blur-xl",
                   )}
                 >
-                  <div className="min-w-0">
-                    <div className="h-full min-h-[240px] sm:min-h-[560px]">
+                  <div className="min-w-0 flex-1">
+                    <div className="flex h-full min-h-[calc(100svh-19rem)] w-full items-center justify-center lg:min-h-[560px]">
                       <ElevenLabsWidget client={client} />
                     </div>
                   </div>

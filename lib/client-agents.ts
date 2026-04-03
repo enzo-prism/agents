@@ -18,10 +18,19 @@ export type ClientCapability = {
 };
 
 export type ClientAgent = {
-  slug: "njo" | "wong" | "norodovich" | "chuang" | "aguil";
+  slug:
+    | "njo"
+    | "wong"
+    | "norodovich"
+    | "chuang"
+    | "aguil"
+    | "ji"
+    | "anderson"
+    | "banaga"
+    | "chun";
   name: string;
   summary?: string;
-  websiteUrl: string;
+  websiteUrl?: string;
   envKey: string;
   agentId?: string;
   accent: string;
@@ -38,6 +47,71 @@ const WONG_AGENT_ID = "agent_6401kmp8pjw0fc48j493nzkybmr0";
 const NORODOVICH_AGENT_ID = "agent_6301kn20gh9denavkvn1bg9krf54";
 const CHUANG_AGENT_ID = "agent_4801kn7ednjse6drbr2cnt62kkp2";
 const AGUIL_AGENT_ID = "agent_4901kn7nwpsse569ce7dp27aze8g";
+const buildPendingCapabilities = ({
+  intakeTitle,
+  intakeDescription,
+  scopeTitle,
+  scopeDescription,
+}: {
+  intakeTitle: string;
+  intakeDescription: string;
+  scopeTitle: string;
+  scopeDescription: string;
+}) =>
+  [
+    {
+      icon: "shield",
+      title: "Agent hookup",
+      description: "Drop in the ElevenLabs widget ID when it arrives.",
+    },
+    {
+      icon: "book",
+      title: "Website handoff",
+      description: "Attach the live practice site and key conversion pages.",
+    },
+    {
+      icon: "calendar",
+      title: intakeTitle,
+      description: intakeDescription,
+    },
+    {
+      icon: "stethoscope",
+      title: scopeTitle,
+      description: scopeDescription,
+    },
+    {
+      icon: "users",
+      title: "Launch QA",
+      description: "Run desktop, mobile, and routing checks before go-live.",
+    },
+  ] as const satisfies readonly ClientCapability[];
+
+const generalDentistPendingCapabilities = buildPendingCapabilities({
+  intakeTitle: "Visit routing",
+  intakeDescription:
+    "Prepare exams, cleanings, emergencies, and cosmetic consult paths.",
+  scopeTitle: "General dentistry",
+  scopeDescription:
+    "Cover preventive, restorative, cosmetic, and urgent care questions.",
+});
+
+const endodontistPendingCapabilities = buildPendingCapabilities({
+  intakeTitle: "Pain triage",
+  intakeDescription:
+    "Handle same-day pain, referrals, and root canal consult routing.",
+  scopeTitle: "Endodontic scope",
+  scopeDescription:
+    "Cover root canals, retreatments, apicoectomy, and imaging handoffs.",
+});
+
+const periodontistPendingCapabilities = buildPendingCapabilities({
+  intakeTitle: "Perio consults",
+  intakeDescription:
+    "Route gum therapy, implant, grafting, and specialist referral calls.",
+  scopeTitle: "Periodontal care",
+  scopeDescription:
+    "Cover gum disease therapy, surgery, grafting, and implant support.",
+});
 
 export const clientAgents = [
   {
@@ -234,6 +308,50 @@ export const clientAgents = [
         description: "Discuss insurance support and flexible financing.",
       },
     ],
+  },
+  {
+    slug: "ji",
+    name: "Dr. Ji",
+    summary: "General dentistry agent pending widget handoff.",
+    envKey: "NEXT_PUBLIC_ELEVENLABS_AGENT_ID_JI",
+    agentId: cleanValue(process.env.NEXT_PUBLIC_ELEVENLABS_AGENT_ID_JI),
+    accent: "#2f6f76",
+    accentSoft: "rgba(47, 111, 118, 0.14)",
+    orbColors: ["#2f6f76", "#b7e1e4"],
+    capabilities: generalDentistPendingCapabilities,
+  },
+  {
+    slug: "anderson",
+    name: "Dr. Anderson",
+    summary: "Endodontic agent pending widget handoff.",
+    envKey: "NEXT_PUBLIC_ELEVENLABS_AGENT_ID_ANDERSON",
+    agentId: cleanValue(process.env.NEXT_PUBLIC_ELEVENLABS_AGENT_ID_ANDERSON),
+    accent: "#6451a7",
+    accentSoft: "rgba(100, 81, 167, 0.14)",
+    orbColors: ["#6451a7", "#d4c8ff"],
+    capabilities: endodontistPendingCapabilities,
+  },
+  {
+    slug: "banaga",
+    name: "Dr. Banaga",
+    summary: "General dentistry agent pending widget handoff.",
+    envKey: "NEXT_PUBLIC_ELEVENLABS_AGENT_ID_BANAGA",
+    agentId: cleanValue(process.env.NEXT_PUBLIC_ELEVENLABS_AGENT_ID_BANAGA),
+    accent: "#9a5b31",
+    accentSoft: "rgba(154, 91, 49, 0.14)",
+    orbColors: ["#9a5b31", "#efccaf"],
+    capabilities: generalDentistPendingCapabilities,
+  },
+  {
+    slug: "chun",
+    name: "Dr. Chun",
+    summary: "Periodontal agent pending widget handoff.",
+    envKey: "NEXT_PUBLIC_ELEVENLABS_AGENT_ID_CHUN",
+    agentId: cleanValue(process.env.NEXT_PUBLIC_ELEVENLABS_AGENT_ID_CHUN),
+    accent: "#3b7a67",
+    accentSoft: "rgba(59, 122, 103, 0.14)",
+    orbColors: ["#3b7a67", "#c4eadf"],
+    capabilities: periodontistPendingCapabilities,
   },
 ] as const satisfies readonly ClientAgent[];
 

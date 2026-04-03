@@ -97,6 +97,10 @@ Do:
 - `Dr. Narodovich` - `https://sacramentodentalmedicine.com`
 - `Dr. Chuang` - `https://famfirstsmile.com`
 - `Dr. Aguil` - `https://exquisitedentistryla.com`
+- `Dr. Ji` - website pending - general dentistry
+- `Dr. Anderson` - website pending - endodontics / root canals
+- `Dr. Banaga` - website pending - general dentistry
+- `Dr. Chun` - website pending - periodontics
 
 - `components/agent-playground.tsx`
   - responsive layout architecture
@@ -114,7 +118,7 @@ Do:
 ## How to update or add a client
 
 1. Add the new client to `lib/client-agents.ts`
-2. Add the production website URL so the QA rail can link back to the live practice site
+2. Add the production website URL when available so the QA rail can link back to the live practice site
 3. Give it realistic checklist prompts tied to real business goals
 4. If needed, add its env override to `.env.example`
 5. Verify:
@@ -164,6 +168,10 @@ Verify:
 - `/?client=norodovich`
 - `/?client=chuang`
 - `/?client=aguil`
+- `/?client=ji`
+- `/?client=anderson`
+- `/?client=banaga`
+- `/?client=chun`
 
 ## ElevenLabs notes
 

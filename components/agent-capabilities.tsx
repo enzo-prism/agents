@@ -47,7 +47,9 @@ export function AgentCapabilities({
   variant = "rail",
 }: AgentCapabilitiesProps) {
   const isRail = variant === "rail";
-  const websiteLabel = getWebsiteLabel(client.websiteUrl);
+  const websiteLabel = client.websiteUrl
+    ? getWebsiteLabel(client.websiteUrl)
+    : undefined;
 
   const renderCapability = (capability: ClientCapability) => {
     const Icon = capabilityIcons[capability.icon];
@@ -117,32 +119,34 @@ export function AgentCapabilities({
         {client.capabilities.map((capability) => renderCapability(capability))}
       </div>
 
-      <div
-        className={cn(
-          "mt-3 border-t border-black/[0.06] pt-3",
-          !isRail && "mt-4 pt-4",
-        )}
-      >
-        <a
+      {client.websiteUrl && websiteLabel ? (
+        <div
           className={cn(
-            "flex items-center justify-between gap-3 rounded-[20px] px-1 py-1 text-left transition-colors hover:text-foreground",
-            isRail ? "text-[12px]" : "text-[12.5px]",
+            "mt-3 border-t border-black/[0.06] pt-3",
+            !isRail && "mt-4 pt-4",
           )}
-          href={client.websiteUrl}
-          target="_blank"
-          rel="noreferrer"
         >
-          <div className="min-w-0">
-            <div className="font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
-              Website
+          <a
+            className={cn(
+              "flex items-center justify-between gap-3 rounded-[20px] px-1 py-1 text-left transition-colors hover:text-foreground",
+              isRail ? "text-[12px]" : "text-[12.5px]",
+            )}
+            href={client.websiteUrl}
+            target="_blank"
+            rel="noreferrer"
+          >
+            <div className="min-w-0">
+              <div className="font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
+                Website
+              </div>
+              <div className="truncate pt-1 font-medium tracking-tight text-foreground/72">
+                {websiteLabel}
+              </div>
             </div>
-            <div className="truncate pt-1 font-medium tracking-tight text-foreground/72">
-              {websiteLabel}
-            </div>
-          </div>
-          <ArrowUpRight className="size-4 shrink-0 text-muted-foreground" />
-        </a>
-      </div>
+            <ArrowUpRight className="size-4 shrink-0 text-muted-foreground" />
+          </a>
+        </div>
+      ) : null}
     </aside>
   );
 }

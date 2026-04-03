@@ -42,7 +42,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 - Each client should define:
   - `slug`
   - `name`
-  - `websiteUrl`
+  - `websiteUrl` when available
   - `envKey`
   - `agentId`
   - `accent`
@@ -51,6 +51,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
   - `capabilities`
 - Keep capability titles short and descriptions concise.
 - Capability content should reflect the real business goals of that client, not a generic medical template.
+- Pending clients still need specialty-specific QA prompts so later widget handoff is easy.
 
 ## Verification expectations
 

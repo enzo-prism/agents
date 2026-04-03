@@ -5,18 +5,26 @@
 1. Run `pnpm install`
 2. Run `pnpm dev`
 3. Open the local URL printed by Next.js
-4. Verify each tab loads a live widget:
+4. Verify the live widgets and pending tabs behave correctly:
    - `Dr. Njo`
    - `Dr. Wong`
    - `Dr. Narodovich`
    - `Dr. Chuang`
    - `Dr. Aguil`
+   - `Dr. Ji` shows the no-agent placeholder until its ID is added
+   - `Dr. Anderson` shows the no-agent placeholder until its ID is added
+   - `Dr. Banaga` shows the no-agent placeholder until its ID is added
+   - `Dr. Chun` shows the no-agent placeholder until its ID is added
 5. Test direct routing if needed:
    - `/?client=njo`
    - `/?client=wong`
    - `/?client=norodovich`
    - `/?client=chuang`
    - `/?client=aguil`
+   - `/?client=ji`
+   - `/?client=anderson`
+   - `/?client=banaga`
+   - `/?client=chun`
 6. Check the responsive shell:
    - the ASCII fire banner is visible at the top
    - desktop shows the full left navigation rail
@@ -48,6 +56,10 @@ NEXT_PUBLIC_ELEVENLABS_AGENT_ID_WONG=
 NEXT_PUBLIC_ELEVENLABS_AGENT_ID_NORODOVICH=
 NEXT_PUBLIC_ELEVENLABS_AGENT_ID_CHUANG=
 NEXT_PUBLIC_ELEVENLABS_AGENT_ID_AGUIL=
+NEXT_PUBLIC_ELEVENLABS_AGENT_ID_JI=
+NEXT_PUBLIC_ELEVENLABS_AGENT_ID_ANDERSON=
+NEXT_PUBLIC_ELEVENLABS_AGENT_ID_BANAGA=
+NEXT_PUBLIC_ELEVENLABS_AGENT_ID_CHUN=
 ```
 
 Use them if staging, preview, or production should point to different agents.

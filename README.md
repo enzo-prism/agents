@@ -15,6 +15,10 @@ review.
 - `Dr. Narodovich` - `https://sacramentodentalmedicine.com`
 - `Dr. Chuang` - `https://famfirstsmile.com`
 - `Dr. Aguil` - `https://exquisitedentistryla.com`
+- `Dr. Ji` - general dentist - pending widget ID
+- `Dr. Anderson` - root canal specialist - pending widget ID
+- `Dr. Banaga` - general dentist - pending widget ID
+- `Dr. Chun` - periodontist - pending widget ID
 
 ## What it does
 
@@ -64,8 +68,10 @@ available port.
 
 ## Agent configuration
 
-The app works out of the box because all five current clients have built-in
-fallback agent IDs in code.
+The app works out of the box for the five live clients because they have
+built-in fallback agent IDs in code. `Dr. Ji`, `Dr. Anderson`, `Dr. Banaga`,
+and `Dr. Chun` are scaffolded and will light up as soon as you provide their
+ElevenLabs widget IDs.
 
 If you want different agents per environment, set any of these in
 `.env.local` or Vercel project settings:
@@ -76,6 +82,10 @@ NEXT_PUBLIC_ELEVENLABS_AGENT_ID_WONG=your_agent_id
 NEXT_PUBLIC_ELEVENLABS_AGENT_ID_NORODOVICH=your_agent_id
 NEXT_PUBLIC_ELEVENLABS_AGENT_ID_CHUANG=your_agent_id
 NEXT_PUBLIC_ELEVENLABS_AGENT_ID_AGUIL=your_agent_id
+NEXT_PUBLIC_ELEVENLABS_AGENT_ID_JI=your_agent_id
+NEXT_PUBLIC_ELEVENLABS_AGENT_ID_ANDERSON=your_agent_id
+NEXT_PUBLIC_ELEVENLABS_AGENT_ID_BANAGA=your_agent_id
+NEXT_PUBLIC_ELEVENLABS_AGENT_ID_CHUN=your_agent_id
 ```
 
 Environment values override the built-in defaults.
@@ -88,6 +98,10 @@ Environment values override the built-in defaults.
 - `?client=norodovich` opens Dr. Narodovich
 - `?client=chuang` opens Dr. Chuang
 - `?client=aguil` opens Dr. Aguil
+- `?client=ji` opens Dr. Ji
+- `?client=anderson` opens Dr. Anderson
+- `?client=banaga` opens Dr. Banaga
+- `?client=chun` opens Dr. Chun
 
 This makes it easy to bookmark or share a specific test surface.
 

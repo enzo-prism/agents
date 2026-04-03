@@ -18,8 +18,8 @@ const siteUrl =
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: "Agent QA",
-  description: "Live client agent testing.",
+  title: "QA",
+  description: "Agent tests.",
 };
 
 export default function RootLayout({

@@ -18,7 +18,7 @@ const siteUrl =
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: "QA",
+  title: "Agents by Prism",
   description: "Agent tests.",
 };
 

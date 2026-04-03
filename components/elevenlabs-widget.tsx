@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useEffectEvent, useRef } from "react";
+import type { CSSProperties } from "react";
+import { useEffect, useEffectEvent, useRef, useState } from "react";
 import { ArrowUpRight, CircleDashed, Sparkles } from "lucide-react";
 
 import type { ClientAgent } from "@/lib/client-agents";
@@ -17,6 +18,10 @@ type WidgetCallEvent = CustomEvent<{
   config?: {
     clientTools?: Record<string, WidgetClientToolHandler>;
   };
+}>;
+type WidgetExpandEvent = CustomEvent<{
+  action?: "expand" | "collapse" | "toggle";
+  _convaiEventHandled?: boolean;
 }>;
 
 const ABSOLUTE_URL_PATTERN = /^[a-z]+:/i;
@@ -118,6 +123,7 @@ function resolveClientUrl(
 export function ElevenLabsWidget({ client }: ElevenLabsWidgetProps) {
   const mobileWidgetRef = useRef<HTMLElement | null>(null);
   const desktopWidgetRef = useRef<HTMLElement | null>(null);
+  const [mobileExpanded, setMobileExpanded] = useState(false);
   const allowedLinkHosts = buildAllowedLinkHosts(client);
   const allowedLinkHostsValue =
     allowedLinkHosts.length > 0 ? allowedLinkHosts.join(",") : undefined;
@@ -153,8 +159,31 @@ export function ElevenLabsWidget({ client }: ElevenLabsWidgetProps) {
     };
   });
 
+  const syncMobileExpandedState = useEffectEvent((event: Event) => {
+    const detail = (event as WidgetExpandEvent).detail;
+
+    if (!detail?.action) {
+      return;
+    }
+
+    setMobileExpanded((current) => {
+      switch (detail.action) {
+        case "expand":
+          return true;
+        case "collapse":
+          return false;
+        case "toggle":
+          return !current;
+        default:
+          return current;
+      }
+    });
+  });
+
   useEffect(() => {
-    const widgets = [mobileWidgetRef.current, desktopWidgetRef.current].filter(
+    const mobileWidget = mobileWidgetRef.current;
+    const desktopWidget = desktopWidgetRef.current;
+    const widgets = [mobileWidget, desktopWidget].filter(
       (value): value is HTMLElement => value !== null,
     );
 
@@ -165,17 +194,31 @@ export function ElevenLabsWidget({ client }: ElevenLabsWidgetProps) {
     const handleWidgetCall = (event: Event) => {
       registerClientTools(event as WidgetCallEvent);
     };
+    const handleWidgetExpand = (event: Event) => {
+      syncMobileExpandedState(event);
+    };
 
     for (const widget of widgets) {
       widget.addEventListener("elevenlabs-convai:call", handleWidgetCall);
     }
 
+    mobileWidget?.addEventListener("elevenlabs-agent:expand", handleWidgetExpand);
+
     return () => {
       for (const widget of widgets) {
         widget.removeEventListener("elevenlabs-convai:call", handleWidgetCall);
       }
+
+      mobileWidget?.removeEventListener(
+        "elevenlabs-agent:expand",
+        handleWidgetExpand,
+      );
     };
   }, [allowedLinkHostsValue, client.agentId, client.slug]);
+
+  const mobileWidgetStyle = {
+    "--el-overlay-padding": mobileExpanded ? "24px" : "12px",
+  } as CSSProperties;
 
   if (!client.agentId) {
     return (
@@ -221,25 +264,41 @@ export function ElevenLabsWidget({ client }: ElevenLabsWidgetProps) {
 
   return (
     <>
-      <div className="relative z-40 flex h-full w-full items-center justify-center overflow-visible lg:hidden">
-        <div className="relative flex h-full min-h-[calc(100svh-19rem)] w-full items-center justify-center overflow-visible rounded-[36px] border border-black/[0.06] bg-[linear-gradient(180deg,rgba(255,255,255,0.95),rgba(247,244,236,0.88))] px-2 py-3 shadow-[0_28px_90px_-56px_rgba(15,23,42,0.34)] ring-1 ring-white/70">
-          <div
-            aria-hidden
-            className="pointer-events-none absolute inset-x-[12%] bottom-[8%] h-36 rounded-full blur-3xl"
-            style={{ background: client.accentSoft }}
-          />
-          <div
-            aria-hidden
-            className="pointer-events-none absolute inset-0 rounded-[36px] bg-[linear-gradient(180deg,rgba(255,255,255,0.62),rgba(255,255,255,0))]"
-          />
+      <div className="lg:hidden">
+        <div
+          className={
+            mobileExpanded
+              ? "pointer-events-none fixed inset-0 z-[120] flex items-center justify-center px-4 pt-[calc(env(safe-area-inset-top)+1rem)] pb-[calc(env(safe-area-inset-bottom)+1.25rem)]"
+              : "pointer-events-none fixed right-0 bottom-0 z-[120] h-[7rem] w-[14rem]"
+          }
+        >
+          {mobileExpanded ? (
+            <>
+              <div
+                aria-hidden
+                className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.78),rgba(245,242,234,0.94))] backdrop-blur-[2px]"
+              />
+              <div
+                aria-hidden
+                className="pointer-events-none absolute inset-x-[20%] bottom-[12%] h-40 rounded-full blur-3xl"
+                style={{ background: client.accentSoft }}
+              />
+            </>
+          ) : null}
 
-          <div className="relative z-10 flex w-full justify-center">
+          <div
+            className={
+              mobileExpanded
+                ? "relative pointer-events-auto h-[min(36rem,calc(100svh-8rem))] w-full max-w-[22rem] overflow-hidden rounded-[32px] border border-black/[0.06] bg-[linear-gradient(180deg,rgba(255,255,255,0.98),rgba(247,244,236,0.92))] shadow-[0_36px_100px_-44px_rgba(15,23,42,0.44)] ring-1 ring-white/80"
+                : "relative pointer-events-auto h-full w-full overflow-visible"
+            }
+          >
             <elevenlabs-convai
               key={`${client.slug}-${client.agentId}-mobile`}
               ref={mobileWidgetRef}
               agent-id={client.agentId}
-              variant="expanded"
-              dismissible="false"
+              variant="compact"
+              placement={mobileExpanded ? "bottom" : "bottom-right"}
               markdown-link-allowed-hosts={allowedLinkHostsValue}
               markdown-link-include-www="true"
               avatar-orb-color-1={client.orbColors[0]}
@@ -247,7 +306,8 @@ export function ElevenLabsWidget({ client }: ElevenLabsWidgetProps) {
               action-text={`Test ${client.name}`}
               start-call-text={`Start ${client.name} session`}
               expand-text={`Open ${client.name}`}
-              className="block h-[calc(100svh-20rem)] min-h-[20rem] max-h-[38rem] w-full max-w-[23rem]"
+              className="block h-full w-full"
+              style={mobileWidgetStyle}
             />
           </div>
         </div>
@@ -259,7 +319,8 @@ export function ElevenLabsWidget({ client }: ElevenLabsWidgetProps) {
           key={`${client.slug}-${client.agentId}-desktop`}
           ref={desktopWidgetRef}
           agent-id={client.agentId}
-          variant="expanded"
+          variant="full"
+          placement="bottom-right"
           dismissible="false"
           markdown-link-allowed-hosts={allowedLinkHostsValue}
           markdown-link-include-www="true"

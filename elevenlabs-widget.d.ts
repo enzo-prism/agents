@@ -10,8 +10,17 @@ declare module "react" {
         "agent-id"?: string;
         "signed-url"?: string;
         "server-location"?: "us";
-        variant?: "expanded";
+        variant?: "tiny" | "compact" | "full";
+        placement?:
+          | "top-left"
+          | "top"
+          | "top-right"
+          | "bottom-left"
+          | "bottom"
+          | "bottom-right";
         dismissible?: "true" | "false";
+        "default-expanded"?: "true" | "false";
+        "always-expanded"?: "true" | "false";
         "avatar-image-url"?: string;
         "avatar-orb-color-1"?: string;
         "avatar-orb-color-2"?: string;
@@ -26,6 +35,9 @@ declare module "react" {
         "override-language"?: string;
         "override-prompt"?: string;
         "override-voice-id"?: string;
+        "markdown-link-allowed-hosts"?: string;
+        "markdown-link-include-www"?: "true" | "false";
+        "show-avatar-when-collapsed"?: "true" | "false";
       };
     }
   }

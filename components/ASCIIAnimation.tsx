@@ -426,7 +426,7 @@ export default function ASCIIAnimation({
         setFrameNumbers(previewNumbers)
       }
 
-      if (!lazy) {
+      if (loadStrategy === "full" || !lazy) {
         await loadAllFrames(source)
       }
     }
@@ -441,10 +441,11 @@ export default function ASCIIAnimation({
   const shouldAnimate = shouldPlay && (loadStrategy !== "full" || fullSetLoaded)
 
   useEffect(() => {
+    if (loadStrategy === "full") return
     if (isVisible && lazy && !fullLoadTriggered.current) {
       loadAllFrames()
     }
-  }, [isVisible, lazy, loadAllFrames])
+  }, [isVisible, lazy, loadAllFrames, loadStrategy])
 
   useEffect(() => {
     if (!shouldAnimate || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return

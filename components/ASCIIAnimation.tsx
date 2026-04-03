@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 
 type Quality = "low" | "medium" | "high"
+type SourceFormat = "auto" | "text" | "color"
 
 interface ColorAsciiMeta {
   version: 2
@@ -29,6 +30,7 @@ interface ASCIIAnimationProps {
   frameCount?: number
   frameFolder?: string
   textSize?: string
+  previewFrameCount?: number
   showFrameCounter?: boolean
   quality?: Quality
   ariaLabel?: string
@@ -39,6 +41,7 @@ interface ASCIIAnimationProps {
   trimWhitespace?: boolean
   verticalAlign?: "center" | "bottom"
   maxScale?: number
+  sourceFormat?: SourceFormat
   filter?: string
 }
 
@@ -58,28 +61,37 @@ const FALLBACK_ORDER: Record<Quality, Quality[]> = {
 const FONT_SIZE = 10
 const FONT_FAMILY = "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, monospace"
 
-async function resolveFrameSource(frameFolder: string, quality: Quality, firstFrameFile: string) {
+async function resolveFrameSource(
+  frameFolder: string,
+  quality: Quality,
+  firstFrameFile: string,
+  sourceFormat: SourceFormat
+) {
   const fallbackQualities = FALLBACK_ORDER[quality]
 
   for (const candidate of fallbackQualities) {
-    try {
-      const metaUrl = `/${frameFolder}/${candidate}/meta.json`
-      const metaResponse = await fetch(metaUrl)
-      if (metaResponse.ok) {
-        return { baseUrl: `/${frameFolder}/${candidate}`, format: "color" as const }
+    if (sourceFormat !== "text") {
+      try {
+        const metaUrl = `/${frameFolder}/${candidate}/meta.json`
+        const metaResponse = await fetch(metaUrl)
+        if (metaResponse.ok) {
+          return { baseUrl: `/${frameFolder}/${candidate}`, format: "color" as const }
+        }
+      } catch {
+        // continue
       }
-    } catch {
-      // continue
     }
 
-    try {
-      const probeUrl = `/${frameFolder}/${candidate}/${firstFrameFile}`
-      const probeResponse = await fetch(probeUrl)
-      if (probeResponse.ok) {
-        return { baseUrl: `/${frameFolder}/${candidate}`, format: "text" as const }
+    if (sourceFormat !== "color") {
+      try {
+        const probeUrl = `/${frameFolder}/${candidate}/${firstFrameFile}`
+        const probeResponse = await fetch(probeUrl)
+        if (probeResponse.ok) {
+          return { baseUrl: `/${frameFolder}/${candidate}`, format: "text" as const }
+        }
+      } catch {
+        // continue
       }
-    } catch {
-      // continue
     }
   }
 
@@ -227,6 +239,7 @@ export default function ASCIIAnimation({
   frameFolder = "frames",
   textSize = "text-xs",
   showFrameCounter = false,
+  previewFrameCount = 1,
   ariaLabel,
   quality = "medium",
   lazy = true,
@@ -236,6 +249,7 @@ export default function ASCIIAnimation({
   trimWhitespace = false,
   verticalAlign = "center",
   maxScale = 1,
+  sourceFormat = "auto",
   filter,
 }: ASCIIAnimationProps) {
   const [frames, setFrames] = useState<string[]>([])
@@ -308,11 +322,13 @@ export default function ASCIIAnimation({
     fullLoadTriggered.current = false
 
     const loadPreview = async () => {
-      const source = await resolveFrameSource(frameFolder, quality, frameFiles[0])
+      const source = await resolveFrameSource(frameFolder, quality, frameFiles[0], sourceFormat)
       if (!source || cancelled) return
 
       sourceRef.current = source
       setFormat(source.format)
+
+      const initialFrameLimit = Math.max(1, previewFrameCount)
 
       if (source.format === "color") {
         const metaResponse = await fetch(`${source.baseUrl}/meta.json`)
@@ -320,15 +336,28 @@ export default function ASCIIAnimation({
         if (cancelled) return
         setMeta(resolvedMeta)
 
-        const frameResponse = await fetch(`${source.baseUrl}/frame_00001.bin`)
-        const buffer = new Uint8Array(await frameResponse.arrayBuffer())
+        const previewBuffers = await Promise.all(
+          Array.from(
+            { length: Math.min(resolvedMeta.frameCount, initialFrameLimit) },
+            async (_, index) => {
+              const response = await fetch(
+                `${source.baseUrl}/frame_${String(index + 1).padStart(5, "0")}.bin`
+              )
+              return new Uint8Array(await response.arrayBuffer())
+            }
+          )
+        )
         if (cancelled) return
-        setColorFrames([buffer])
+        setColorFrames(previewBuffers)
       } else {
-        const response = await fetch(`${source.baseUrl}/${frameFiles[0]}`)
-        const firstFrame = await response.text()
+        const previewFrames = await Promise.all(
+          frameFiles.slice(0, initialFrameLimit).map(async filename => {
+            const response = await fetch(`${source.baseUrl}/${filename}`)
+            return response.text()
+          })
+        )
         if (cancelled) return
-        setFrames([firstFrame])
+        setFrames(previewFrames)
       }
 
       if (!lazy) {
@@ -340,7 +369,7 @@ export default function ASCIIAnimation({
     return () => {
       cancelled = true
     }
-  }, [frameFiles, frameFolder, lazy, loadAllFrames, providedFrames, quality])
+  }, [frameFiles, frameFolder, lazy, loadAllFrames, previewFrameCount, providedFrames, quality, sourceFormat])
 
   const shouldPlay = isVisible && (!playOnHover || isHovered)
 

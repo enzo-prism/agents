@@ -66,6 +66,7 @@ export function AsciiFireBanner({ className }: AsciiFireBannerProps) {
             verticalAlign="bottom"
             maxScale={bannerScale}
             sourceFormat="text"
+            loadStrategy="full"
           />
         </div>
       </div>

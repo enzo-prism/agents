@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 
 type Quality = "low" | "medium" | "high"
 type SourceFormat = "auto" | "text" | "color"
+type LoadStrategy = "preview" | "full"
 
 interface ColorAsciiMeta {
   version: 2
@@ -42,6 +43,7 @@ interface ASCIIAnimationProps {
   verticalAlign?: "center" | "bottom"
   maxScale?: number
   sourceFormat?: SourceFormat
+  loadStrategy?: LoadStrategy
   filter?: string
 }
 
@@ -282,6 +284,7 @@ export default function ASCIIAnimation({
   verticalAlign = "center",
   maxScale = 1,
   sourceFormat = "auto",
+  loadStrategy = "preview",
   filter,
 }: ASCIIAnimationProps) {
   const [frames, setFrames] = useState<string[]>([])
@@ -293,6 +296,7 @@ export default function ASCIIAnimation({
   const [currentFrame, setCurrentFrame] = useState(0)
   const [isVisible, setIsVisible] = useState(false)
   const [isHovered, setIsHovered] = useState(false)
+  const [fullSetLoaded, setFullSetLoaded] = useState(Boolean(providedFrames?.length))
   const [scale, setScale] = useState(1)
   const containerRef = useRef<HTMLDivElement>(null)
   const preRef = useRef<HTMLPreElement>(null)
@@ -338,6 +342,7 @@ export default function ASCIIAnimation({
         )
         setColorFrames(loaded)
         setColorFrameNumbers(loadedFrameNumbers)
+        setFullSetLoaded(true)
       } else {
         const loadedFrameNumbers = Array.from({ length: frameFiles.length }, (_, index) => index)
         const loaded = await Promise.all(
@@ -348,6 +353,7 @@ export default function ASCIIAnimation({
         )
         setFrames(loaded)
         setFrameNumbers(loadedFrameNumbers)
+        setFullSetLoaded(true)
       }
     },
     [frameFiles]
@@ -357,11 +363,19 @@ export default function ASCIIAnimation({
     if (providedFrames) {
       setFrames(providedFrames)
       setFrameNumbers(Array.from({ length: providedFrames.length }, (_, index) => index))
+      setFullSetLoaded(providedFrames.length >= frameCount)
       return
     }
 
     let cancelled = false
     fullLoadTriggered.current = false
+    setFullSetLoaded(false)
+    setCurrentFrame(0)
+    setFrames([])
+    setFrameNumbers([])
+    setColorFrames([])
+    setColorFrameNumbers([])
+    setMeta(null)
 
     const loadPreview = async () => {
       const source = await resolveFrameSource(frameFolder, quality, frameFiles[0], sourceFormat)
@@ -378,10 +392,13 @@ export default function ASCIIAnimation({
         if (cancelled) return
         setMeta(resolvedMeta)
 
-        const previewNumbers = buildPreviewFrameNumbers(
-          resolvedMeta.frameCount,
-          Math.min(resolvedMeta.frameCount, initialFrameLimit)
-        )
+        const previewNumbers =
+          loadStrategy === "full"
+            ? [0]
+            : buildPreviewFrameNumbers(
+                resolvedMeta.frameCount,
+                Math.min(resolvedMeta.frameCount, initialFrameLimit)
+              )
         const previewBuffers = await Promise.all(
           previewNumbers.map(async (frameNumber) => {
             const response = await fetch(
@@ -394,7 +411,10 @@ export default function ASCIIAnimation({
         setColorFrames(previewBuffers)
         setColorFrameNumbers(previewNumbers)
       } else {
-        const previewNumbers = buildPreviewFrameNumbers(frameFiles.length, initialFrameLimit)
+        const previewNumbers =
+          loadStrategy === "full"
+            ? [0]
+            : buildPreviewFrameNumbers(frameFiles.length, initialFrameLimit)
         const previewFrames = await Promise.all(
           previewNumbers.map(async (frameNumber) => {
             const response = await fetch(`${source.baseUrl}/${frameFiles[frameNumber]}`)
@@ -415,18 +435,19 @@ export default function ASCIIAnimation({
     return () => {
       cancelled = true
     }
-  }, [frameFiles, frameFolder, lazy, loadAllFrames, previewFrameCount, providedFrames, quality, sourceFormat])
+  }, [frameCount, frameFiles, frameFolder, lazy, loadAllFrames, loadStrategy, previewFrameCount, providedFrames, quality, sourceFormat])
 
   const shouldPlay = isVisible && (!playOnHover || isHovered)
+  const shouldAnimate = shouldPlay && (loadStrategy !== "full" || fullSetLoaded)
 
   useEffect(() => {
-    if (shouldPlay && lazy && !fullLoadTriggered.current) {
+    if (isVisible && lazy && !fullLoadTriggered.current) {
       loadAllFrames()
     }
-  }, [lazy, loadAllFrames, shouldPlay])
+  }, [isVisible, lazy, loadAllFrames])
 
   useEffect(() => {
-    if (!shouldPlay || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return
+    if (!shouldAnimate || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return
 
     const totalFrameCount = format === "color" ? (meta?.frameCount || frameCount) : frameCount
     if (totalFrameCount <= 1) return
@@ -450,7 +471,7 @@ export default function ASCIIAnimation({
 
     animationFrameId = window.requestAnimationFrame(tick)
     return () => window.cancelAnimationFrame(animationFrameId)
-  }, [format, fps, frameCount, meta?.frameCount, shouldPlay])
+  }, [format, fps, frameCount, meta?.frameCount, shouldAnimate])
 
   const visibleTextFrames = useMemo(
     () => (trimWhitespace ? trimTextFrames(frames) : frames),

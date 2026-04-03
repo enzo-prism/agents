@@ -24,7 +24,7 @@ export function AsciiFireBanner({ className }: AsciiFireBannerProps) {
   const isDesktop = useMediaQuery("(min-width: 1024px)");
   const bannerQuality = isDesktop ? "high" : isTabletUp ? "medium" : "low";
   const bannerFps = isDesktop ? 17 : isTabletUp ? 13 : 10;
-  const previewFrameCount = isDesktop ? 8 : isTabletUp ? 6 : 4;
+  const previewFrameCount = isDesktop ? 14 : isTabletUp ? 10 : 6;
   const bannerScale = isDesktop ? 2.35 : isTabletUp ? 2.55 : 2.9;
 
   return (

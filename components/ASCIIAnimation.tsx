@@ -196,6 +196,38 @@ function findAsciiBounds(lines: string[]): AsciiBounds | null {
   }
 }
 
+function buildPreviewFrameNumbers(totalFrames: number, previewFrameCount: number) {
+  if (totalFrames <= 0) return []
+  if (previewFrameCount <= 1) return [0]
+  if (previewFrameCount >= totalFrames) {
+    return Array.from({ length: totalFrames }, (_, index) => index)
+  }
+
+  const sampledFrames = Array.from(
+    { length: previewFrameCount },
+    (_, index) => Math.round((index * (totalFrames - 1)) / (previewFrameCount - 1))
+  )
+
+  return [...new Set(sampledFrames)]
+}
+
+function pickLoadedFrameIndex(frameNumbers: number[], targetFrame: number) {
+  if (!frameNumbers.length) return -1
+
+  const exactMatch = frameNumbers.indexOf(targetFrame)
+  if (exactMatch !== -1) {
+    return exactMatch
+  }
+
+  for (let index = frameNumbers.length - 1; index >= 0; index -= 1) {
+    if (frameNumbers[index] <= targetFrame) {
+      return index
+    }
+  }
+
+  return frameNumbers.length - 1
+}
+
 function trimTextFrames(frames: string[]) {
   let bounds: AsciiBounds | null = null
 
@@ -253,7 +285,9 @@ export default function ASCIIAnimation({
   filter,
 }: ASCIIAnimationProps) {
   const [frames, setFrames] = useState<string[]>([])
+  const [frameNumbers, setFrameNumbers] = useState<number[]>([])
   const [colorFrames, setColorFrames] = useState<Uint8Array[]>([])
+  const [colorFrameNumbers, setColorFrameNumbers] = useState<number[]>([])
   const [meta, setMeta] = useState<ColorAsciiMeta | null>(null)
   const [format, setFormat] = useState<"text" | "color" | null>(providedFrames ? "text" : null)
   const [currentFrame, setCurrentFrame] = useState(0)
@@ -290,23 +324,30 @@ export default function ASCIIAnimation({
         const resolvedMeta = await metaResponse.json()
         setMeta(resolvedMeta)
 
+        const loadedFrameNumbers = Array.from(
+          { length: resolvedMeta.frameCount },
+          (_, index) => index
+        )
         const loaded = await Promise.all(
-          Array.from({ length: resolvedMeta.frameCount }, async (_, i) => {
+          loadedFrameNumbers.map(async (frameNumber) => {
             const response = await fetch(
-              `${resolvedSource.baseUrl}/frame_${String(i + 1).padStart(5, "0")}.bin`
+              `${resolvedSource.baseUrl}/frame_${String(frameNumber + 1).padStart(5, "0")}.bin`
             )
             return new Uint8Array(await response.arrayBuffer())
           })
         )
         setColorFrames(loaded)
+        setColorFrameNumbers(loadedFrameNumbers)
       } else {
+        const loadedFrameNumbers = Array.from({ length: frameFiles.length }, (_, index) => index)
         const loaded = await Promise.all(
-          frameFiles.map(async filename => {
-            const response = await fetch(`${resolvedSource.baseUrl}/${filename}`)
+          loadedFrameNumbers.map(async (frameNumber) => {
+            const response = await fetch(`${resolvedSource.baseUrl}/${frameFiles[frameNumber]}`)
             return response.text()
           })
         )
         setFrames(loaded)
+        setFrameNumbers(loadedFrameNumbers)
       }
     },
     [frameFiles]
@@ -315,6 +356,7 @@ export default function ASCIIAnimation({
   useEffect(() => {
     if (providedFrames) {
       setFrames(providedFrames)
+      setFrameNumbers(Array.from({ length: providedFrames.length }, (_, index) => index))
       return
     }
 
@@ -336,28 +378,32 @@ export default function ASCIIAnimation({
         if (cancelled) return
         setMeta(resolvedMeta)
 
+        const previewNumbers = buildPreviewFrameNumbers(
+          resolvedMeta.frameCount,
+          Math.min(resolvedMeta.frameCount, initialFrameLimit)
+        )
         const previewBuffers = await Promise.all(
-          Array.from(
-            { length: Math.min(resolvedMeta.frameCount, initialFrameLimit) },
-            async (_, index) => {
-              const response = await fetch(
-                `${source.baseUrl}/frame_${String(index + 1).padStart(5, "0")}.bin`
-              )
-              return new Uint8Array(await response.arrayBuffer())
-            }
-          )
+          previewNumbers.map(async (frameNumber) => {
+            const response = await fetch(
+              `${source.baseUrl}/frame_${String(frameNumber + 1).padStart(5, "0")}.bin`
+            )
+            return new Uint8Array(await response.arrayBuffer())
+          })
         )
         if (cancelled) return
         setColorFrames(previewBuffers)
+        setColorFrameNumbers(previewNumbers)
       } else {
+        const previewNumbers = buildPreviewFrameNumbers(frameFiles.length, initialFrameLimit)
         const previewFrames = await Promise.all(
-          frameFiles.slice(0, initialFrameLimit).map(async filename => {
-            const response = await fetch(`${source.baseUrl}/${filename}`)
+          previewNumbers.map(async (frameNumber) => {
+            const response = await fetch(`${source.baseUrl}/${frameFiles[frameNumber]}`)
             return response.text()
           })
         )
         if (cancelled) return
         setFrames(previewFrames)
+        setFrameNumbers(previewNumbers)
       }
 
       if (!lazy) {
@@ -381,29 +427,62 @@ export default function ASCIIAnimation({
 
   useEffect(() => {
     if (!shouldPlay || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return
-    const total = format === "color" ? colorFrames.length : frames.length
-    if (total <= 1) return
 
-    const interval = window.setInterval(() => {
-      setCurrentFrame(prev => (prev + 1) % total)
-    }, 1000 / fps)
+    const totalFrameCount = format === "color" ? (meta?.frameCount || frameCount) : frameCount
+    if (totalFrameCount <= 1) return
 
-    return () => window.clearInterval(interval)
-  }, [colorFrames.length, format, fps, frames.length, shouldPlay])
+    let animationFrameId = 0
+    let lastRenderedFrame = -1
+    const frameDuration = 1000 / fps
+    const animationStart = performance.now()
 
-  useEffect(() => {
-    if (format === "color" && meta && colorFrames[currentFrame] && canvasRef.current) {
-      drawColorFrame(canvasRef.current, meta, colorFrames[currentFrame])
+    const tick = (timestamp: number) => {
+      const elapsed = timestamp - animationStart
+      const nextFrame = Math.floor(elapsed / frameDuration) % totalFrameCount
+
+      if (nextFrame !== lastRenderedFrame) {
+        lastRenderedFrame = nextFrame
+        setCurrentFrame(nextFrame)
+      }
+
+      animationFrameId = window.requestAnimationFrame(tick)
     }
-  }, [colorFrames, currentFrame, format, meta])
+
+    animationFrameId = window.requestAnimationFrame(tick)
+    return () => window.cancelAnimationFrame(animationFrameId)
+  }, [format, fps, frameCount, meta?.frameCount, shouldPlay])
 
   const visibleTextFrames = useMemo(
     () => (trimWhitespace ? trimTextFrames(frames) : frames),
     [frames, trimWhitespace]
   )
+
+  const displayedTextFrameIndex = useMemo(
+    () => pickLoadedFrameIndex(frameNumbers, currentFrame),
+    [frameNumbers, currentFrame]
+  )
+  const displayedColorFrameIndex = useMemo(
+    () => pickLoadedFrameIndex(colorFrameNumbers, currentFrame),
+    [colorFrameNumbers, currentFrame]
+  )
+
+  useEffect(() => {
+    if (
+      format === "color" &&
+      meta &&
+      displayedColorFrameIndex !== -1 &&
+      colorFrames[displayedColorFrameIndex] &&
+      canvasRef.current
+    ) {
+      drawColorFrame(canvasRef.current, meta, colorFrames[displayedColorFrameIndex])
+    }
+  }, [colorFrames, displayedColorFrameIndex, format, meta])
+
   const currentVisibleTextFrame =
-    visibleTextFrames[currentFrame] || visibleTextFrames[0] || ""
-  const frameCounterTotal = format === "color" ? (meta?.frameCount || colorFrames.length) : (frames.length || frameCount)
+    displayedTextFrameIndex === -1
+      ? visibleTextFrames[0] || ""
+      : visibleTextFrames[displayedTextFrameIndex] || visibleTextFrames[0] || ""
+  const frameCounterTotal = format === "color" ? (meta?.frameCount || frameCount) : frameCount
   const transformOrigin = verticalAlign === "bottom" ? "center bottom" : "center"
 
   useEffect(() => {

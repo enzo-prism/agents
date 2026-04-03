@@ -10,11 +10,11 @@ review.
 
 ## Current clients
 
-- `Dr. Njo`
-- `Dr. Wong`
-- `Dr. Narodovich`
-- `Dr. Chuang`
-- `Dr. Aguil`
+- `Dr. Njo` - `https://michaelnjodds.com`
+- `Dr. Wong` - `https://chriswongdds.com`
+- `Dr. Narodovich` - `https://sacramentodentalmedicine.com`
+- `Dr. Chuang` - `https://famfirstsmile.com`
+- `Dr. Aguil` - `https://exquisitedentistryla.com`
 
 ## What it does
 
@@ -116,7 +116,7 @@ components/
   elevenlabs-widget.tsx     # official widget embed wrapper
   ui/popover.tsx            # compact mobile client selector
 lib/
-  client-agents.ts          # client config, colors, env keys, agent IDs
+  client-agents.ts          # client config, websites, colors, env keys, agent IDs
 ```
 
 ## Deploying to Vercel

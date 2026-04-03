@@ -85,9 +85,18 @@ Do:
 
 - `lib/client-agents.ts`
   - client list
+  - client website URLs
   - built-in fallback agent IDs
   - per-client accent colors
   - per-client checklist content
+
+## Client website reference
+
+- `Dr. Njo` - `https://michaelnjodds.com`
+- `Dr. Wong` - `https://chriswongdds.com`
+- `Dr. Narodovich` - `https://sacramentodentalmedicine.com`
+- `Dr. Chuang` - `https://famfirstsmile.com`
+- `Dr. Aguil` - `https://exquisitedentistryla.com`
 
 - `components/agent-playground.tsx`
   - responsive layout architecture
@@ -105,9 +114,10 @@ Do:
 ## How to update or add a client
 
 1. Add the new client to `lib/client-agents.ts`
-2. Give it realistic checklist prompts tied to real business goals
-3. If needed, add its env override to `.env.example`
-4. Verify:
+2. Add the production website URL so the QA rail can link back to the live practice site
+3. Give it realistic checklist prompts tied to real business goals
+4. If needed, add its env override to `.env.example`
+5. Verify:
    - direct URL routing works
    - mobile selector still behaves cleanly
    - checklist content fits in both desktop and mobile surfaces

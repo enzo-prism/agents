@@ -21,6 +21,7 @@ export type ClientAgent = {
   slug: "njo" | "wong" | "norodovich" | "chuang" | "aguil";
   name: string;
   summary?: string;
+  websiteUrl: string;
   envKey: string;
   agentId?: string;
   accent: string;
@@ -42,6 +43,7 @@ export const clientAgents = [
   {
     slug: "njo",
     name: "Dr. Njo",
+    websiteUrl: "https://michaelnjodds.com",
     envKey: "NEXT_PUBLIC_ELEVENLABS_AGENT_ID_NJO",
     agentId:
       cleanValue(process.env.NEXT_PUBLIC_ELEVENLABS_AGENT_ID_NJO) ??
@@ -80,6 +82,7 @@ export const clientAgents = [
   {
     slug: "wong",
     name: "Dr. Wong",
+    websiteUrl: "https://chriswongdds.com",
     envKey: "NEXT_PUBLIC_ELEVENLABS_AGENT_ID_WONG",
     agentId:
       cleanValue(process.env.NEXT_PUBLIC_ELEVENLABS_AGENT_ID_WONG) ??
@@ -118,6 +121,7 @@ export const clientAgents = [
   {
     slug: "norodovich",
     name: "Dr. Narodovich",
+    websiteUrl: "https://sacramentodentalmedicine.com",
     envKey: "NEXT_PUBLIC_ELEVENLABS_AGENT_ID_NORODOVICH",
     agentId:
       cleanValue(process.env.NEXT_PUBLIC_ELEVENLABS_AGENT_ID_NORODOVICH) ??
@@ -156,6 +160,7 @@ export const clientAgents = [
   {
     slug: "chuang",
     name: "Dr. Chuang",
+    websiteUrl: "https://famfirstsmile.com",
     envKey: "NEXT_PUBLIC_ELEVENLABS_AGENT_ID_CHUANG",
     agentId:
       cleanValue(process.env.NEXT_PUBLIC_ELEVENLABS_AGENT_ID_CHUANG) ??
@@ -194,6 +199,7 @@ export const clientAgents = [
   {
     slug: "aguil",
     name: "Dr. Aguil",
+    websiteUrl: "https://exquisitedentistryla.com",
     envKey: "NEXT_PUBLIC_ELEVENLABS_AGENT_ID_AGUIL",
     agentId:
       cleanValue(process.env.NEXT_PUBLIC_ELEVENLABS_AGENT_ID_AGUIL) ??

@@ -1,4 +1,5 @@
 import {
+  ArrowUpRight,
   BookOpen,
   BriefcaseBusiness,
   CalendarDays,
@@ -46,6 +47,7 @@ export function AgentCapabilities({
   variant = "rail",
 }: AgentCapabilitiesProps) {
   const isRail = variant === "rail";
+  const websiteLabel = getWebsiteLabel(client.websiteUrl);
 
   const renderCapability = (capability: ClientCapability) => {
     const Icon = capabilityIcons[capability.icon];
@@ -111,9 +113,37 @@ export function AgentCapabilities({
         <div aria-hidden className="h-px flex-1 bg-black/[0.06]" />
       </div>
 
+      <a
+        className={cn(
+          "mb-3 flex items-center justify-between gap-3 rounded-[20px] border border-black/[0.06] bg-white/[0.72] px-3 py-2.5 text-left transition-colors hover:bg-white",
+          isRail ? "text-[12px]" : "text-[12.5px]",
+        )}
+        href={client.websiteUrl}
+        target="_blank"
+        rel="noreferrer"
+      >
+        <div className="min-w-0">
+          <div className="font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
+            Website
+          </div>
+          <div className="truncate pt-1 font-medium tracking-tight text-foreground/88">
+            {websiteLabel}
+          </div>
+        </div>
+        <ArrowUpRight className="size-4 shrink-0 text-muted-foreground" />
+      </a>
+
       <div className={cn("grid", isRail ? "gap-2.5" : "gap-3")}>
         {client.capabilities.map((capability) => renderCapability(capability))}
       </div>
     </aside>
   );
+}
+
+function getWebsiteLabel(websiteUrl: string) {
+  try {
+    return new URL(websiteUrl).hostname.replace(/^www\./, "");
+  } catch {
+    return websiteUrl.replace(/^https?:\/\//, "").replace(/\/$/, "");
+  }
 }

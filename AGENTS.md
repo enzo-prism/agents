@@ -34,7 +34,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 - `components/agent-capabilities.tsx`: per-client QA guidance surfaces
 - `components/elevenlabs-widget.tsx`: official widget wrapper
 - `components/ascii-fire-banner.tsx`: sticky ASCII fire banner
-- `lib/client-agents.ts`: client registry, colors, agent IDs, and checklist content
+- `lib/client-agents.ts`: client registry, website URLs, colors, agent IDs, and checklist content
 
 ## Client data model
 
@@ -42,6 +42,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 - Each client should define:
   - `slug`
   - `name`
+  - `websiteUrl`
   - `envKey`
   - `agentId`
   - `accent`

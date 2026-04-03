@@ -40,6 +40,7 @@ interface ASCIIAnimationProps {
   gradient?: string
   playOnHover?: boolean
   trimWhitespace?: boolean
+  trimPadding?: number
   verticalAlign?: "center" | "bottom"
   maxScale?: number
   sourceFormat?: SourceFormat
@@ -230,7 +231,7 @@ function pickLoadedFrameIndex(frameNumbers: number[], targetFrame: number) {
   return frameNumbers.length - 1
 }
 
-function trimTextFrames(frames: string[]) {
+function trimTextFrames(frames: string[], padding = 0) {
   let bounds: AsciiBounds | null = null
 
   frames.forEach(frame => {
@@ -255,12 +256,16 @@ function trimTextFrames(frames: string[]) {
   }
 
   const trimmedBounds = bounds as AsciiBounds
+  const paddedTop = Math.max(0, trimmedBounds.top - padding)
+  const paddedBottom = trimmedBounds.bottom + padding
+  const paddedLeft = Math.max(0, trimmedBounds.left - padding)
+  const paddedRight = trimmedBounds.right + padding
 
   return frames.map(frame =>
     frame
       .split("\n")
-      .slice(trimmedBounds.top, trimmedBounds.bottom + 1)
-      .map(line => line.slice(trimmedBounds.left, trimmedBounds.right + 1))
+      .slice(paddedTop, paddedBottom + 1)
+      .map(line => line.slice(paddedLeft, paddedRight + 1))
       .join("\n")
   )
 }
@@ -281,6 +286,7 @@ export default function ASCIIAnimation({
   gradient,
   playOnHover = false,
   trimWhitespace = false,
+  trimPadding = 0,
   verticalAlign = "center",
   maxScale = 1,
   sourceFormat = "auto",
@@ -475,8 +481,8 @@ export default function ASCIIAnimation({
   }, [format, fps, frameCount, meta?.frameCount, shouldAnimate])
 
   const visibleTextFrames = useMemo(
-    () => (trimWhitespace ? trimTextFrames(frames) : frames),
-    [frames, trimWhitespace]
+    () => (trimWhitespace ? trimTextFrames(frames, trimPadding) : frames),
+    [frames, trimPadding, trimWhitespace]
   )
 
   const displayedTextFrameIndex = useMemo(

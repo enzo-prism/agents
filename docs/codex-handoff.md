@@ -97,9 +97,9 @@ Do:
 - `Dr. Narodovich` - `https://sacramentodentalmedicine.com`
 - `Dr. Chuang` - `https://famfirstsmile.com`
 - `Dr. Aguil` - `https://exquisitedentistryla.com`
-- `Dr. Ji` - website pending - general dentistry
-- `Dr. Anderson` - website pending - endodontics / root canals
-- `Dr. Banaga` - website pending - general dentistry
+- `Dr. Ji` - `https://www.tingjenjidds.com` - general dentistry - live widget ID
+- `Dr. Anderson` - `https://www.winecountryrootcanal.com` - endodontics / root canals - live widget ID
+- `Dr. Banaga` - `https://towncentredental.net` - general dentistry - live widget ID
 - `Dr. Chun` - website pending - periodontics
 
 - `components/agent-playground.tsx`

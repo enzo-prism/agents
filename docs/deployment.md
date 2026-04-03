@@ -11,9 +11,9 @@
    - `Dr. Narodovich`
    - `Dr. Chuang`
    - `Dr. Aguil`
-   - `Dr. Ji` shows the no-agent placeholder until its ID is added
-   - `Dr. Anderson` shows the no-agent placeholder until its ID is added
-   - `Dr. Banaga` shows the no-agent placeholder until its ID is added
+   - `Dr. Ji`
+   - `Dr. Anderson`
+   - `Dr. Banaga`
    - `Dr. Chun` shows the no-agent placeholder until its ID is added
 5. Test direct routing if needed:
    - `/?client=njo`
@@ -72,7 +72,7 @@ Use them if staging, preview, or production should point to different agents.
 4. Deploy
 5. Visit the live site once after deployment so Vercel Web Analytics can begin collecting page views
 6. Add the final preview and production domains to ElevenLabs allowlists
-7. Re-test all five widgets after deployment
+7. Re-test all eight live widgets after deployment
 
 ## Notes
 

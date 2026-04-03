@@ -15,9 +15,9 @@ review.
 - `Dr. Narodovich` - `https://sacramentodentalmedicine.com`
 - `Dr. Chuang` - `https://famfirstsmile.com`
 - `Dr. Aguil` - `https://exquisitedentistryla.com`
-- `Dr. Ji` - general dentist - pending widget ID
-- `Dr. Anderson` - root canal specialist - pending widget ID
-- `Dr. Banaga` - general dentist - pending widget ID
+- `Dr. Ji` - `https://www.tingjenjidds.com` - live widget ID
+- `Dr. Anderson` - `https://www.winecountryrootcanal.com`
+- `Dr. Banaga` - `https://towncentredental.net` - live widget ID
 - `Dr. Chun` - periodontist - pending widget ID
 
 ## What it does
@@ -68,10 +68,9 @@ available port.
 
 ## Agent configuration
 
-The app works out of the box for the five live clients because they have
-built-in fallback agent IDs in code. `Dr. Ji`, `Dr. Anderson`, `Dr. Banaga`,
-and `Dr. Chun` are scaffolded and will light up as soon as you provide their
-ElevenLabs widget IDs.
+The app works out of the box for the eight live clients because they have
+built-in fallback agent IDs in code. `Dr. Chun` is still scaffolded and will
+light up as soon as you provide the ElevenLabs widget ID.
 
 If you want different agents per environment, set any of these in
 `.env.local` or Vercel project settings:

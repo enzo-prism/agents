@@ -47,6 +47,9 @@ const WONG_AGENT_ID = "agent_6401kmp8pjw0fc48j493nzkybmr0";
 const NORODOVICH_AGENT_ID = "agent_6301kn20gh9denavkvn1bg9krf54";
 const CHUANG_AGENT_ID = "agent_4801kn7ednjse6drbr2cnt62kkp2";
 const AGUIL_AGENT_ID = "agent_4901kn7nwpsse569ce7dp27aze8g";
+const JI_AGENT_ID = "agent_4901kn9vshwtfnss5e365h297tve";
+const ANDERSON_AGENT_ID = "agent_7901kn9vfzspeft9fxh46m318760";
+const BANAGA_AGENT_ID = "agent_8801kn9vpzvwfn593sa0c0qn68vq";
 const buildPendingCapabilities = ({
   intakeTitle,
   intakeDescription,
@@ -86,23 +89,61 @@ const buildPendingCapabilities = ({
     },
   ] as const satisfies readonly ClientCapability[];
 
-const generalDentistPendingCapabilities = buildPendingCapabilities({
-  intakeTitle: "Visit routing",
-  intakeDescription:
-    "Prepare exams, cleanings, emergencies, and cosmetic consult paths.",
-  scopeTitle: "General dentistry",
-  scopeDescription:
-    "Cover preventive, restorative, cosmetic, and urgent care questions.",
-});
+const generalDentistCapabilities = [
+  {
+    icon: "calendar",
+    title: "Visit routing",
+    description: "Guide exams, cleanings, emergencies, and consult booking.",
+  },
+  {
+    icon: "stethoscope",
+    title: "General care",
+    description: "Cover preventive, restorative, cosmetic, and urgent care.",
+  },
+  {
+    icon: "map-pin",
+    title: "Office details",
+    description: "Share location, hours, and how to contact the office.",
+  },
+  {
+    icon: "shield",
+    title: "Insurance",
+    description: "Cover benefits, self-pay, and financing basics.",
+  },
+  {
+    icon: "users",
+    title: "Visit prep",
+    description: "Set expectations for first visits and follow-up steps.",
+  },
+] as const satisfies readonly ClientCapability[];
 
-const endodontistPendingCapabilities = buildPendingCapabilities({
-  intakeTitle: "Pain triage",
-  intakeDescription:
-    "Handle same-day pain, referrals, and root canal consult routing.",
-  scopeTitle: "Endodontic scope",
-  scopeDescription:
-    "Cover root canals, retreatments, apicoectomy, and imaging handoffs.",
-});
+const endodontistCapabilities = [
+  {
+    icon: "calendar",
+    title: "Pain triage",
+    description: "Route same-day pain, referrals, and root canal consults.",
+  },
+  {
+    icon: "stethoscope",
+    title: "Root canal care",
+    description: "Explain root canals, retreatments, and apicoectomy basics.",
+  },
+  {
+    icon: "book",
+    title: "Referral flow",
+    description: "Confirm what records, imaging, or notes to bring.",
+  },
+  {
+    icon: "shield",
+    title: "Insurance",
+    description: "Cover specialist billing, benefits, and next steps.",
+  },
+  {
+    icon: "users",
+    title: "Visit prep",
+    description: "Set expectations for consult timing, comfort, and follow-up.",
+  },
+] as const satisfies readonly ClientCapability[];
 
 const periodontistPendingCapabilities = buildPendingCapabilities({
   intakeTitle: "Perio consults",
@@ -312,35 +353,43 @@ export const clientAgents = [
   {
     slug: "ji",
     name: "Dr. Ji",
-    summary: "General dentistry agent pending widget handoff.",
+    summary: "General dentistry QA agent.",
+    websiteUrl: "https://www.tingjenjidds.com",
     envKey: "NEXT_PUBLIC_ELEVENLABS_AGENT_ID_JI",
-    agentId: cleanValue(process.env.NEXT_PUBLIC_ELEVENLABS_AGENT_ID_JI),
+    agentId:
+      cleanValue(process.env.NEXT_PUBLIC_ELEVENLABS_AGENT_ID_JI) ?? JI_AGENT_ID,
     accent: "#2f6f76",
     accentSoft: "rgba(47, 111, 118, 0.14)",
     orbColors: ["#2f6f76", "#b7e1e4"],
-    capabilities: generalDentistPendingCapabilities,
+    capabilities: generalDentistCapabilities,
   },
   {
     slug: "anderson",
     name: "Dr. Anderson",
-    summary: "Endodontic agent pending widget handoff.",
+    summary: "Endodontic QA agent.",
+    websiteUrl: "https://www.winecountryrootcanal.com",
     envKey: "NEXT_PUBLIC_ELEVENLABS_AGENT_ID_ANDERSON",
-    agentId: cleanValue(process.env.NEXT_PUBLIC_ELEVENLABS_AGENT_ID_ANDERSON),
+    agentId:
+      cleanValue(process.env.NEXT_PUBLIC_ELEVENLABS_AGENT_ID_ANDERSON) ??
+      ANDERSON_AGENT_ID,
     accent: "#6451a7",
     accentSoft: "rgba(100, 81, 167, 0.14)",
     orbColors: ["#6451a7", "#d4c8ff"],
-    capabilities: endodontistPendingCapabilities,
+    capabilities: endodontistCapabilities,
   },
   {
     slug: "banaga",
     name: "Dr. Banaga",
-    summary: "General dentistry agent pending widget handoff.",
+    summary: "General dentistry QA agent.",
+    websiteUrl: "https://towncentredental.net",
     envKey: "NEXT_PUBLIC_ELEVENLABS_AGENT_ID_BANAGA",
-    agentId: cleanValue(process.env.NEXT_PUBLIC_ELEVENLABS_AGENT_ID_BANAGA),
+    agentId:
+      cleanValue(process.env.NEXT_PUBLIC_ELEVENLABS_AGENT_ID_BANAGA) ??
+      BANAGA_AGENT_ID,
     accent: "#9a5b31",
     accentSoft: "rgba(154, 91, 49, 0.14)",
     orbColors: ["#9a5b31", "#efccaf"],
-    capabilities: generalDentistPendingCapabilities,
+    capabilities: generalDentistCapabilities,
   },
   {
     slug: "chun",

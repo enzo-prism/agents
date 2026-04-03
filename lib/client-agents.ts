@@ -31,6 +31,7 @@ export type ClientAgent = {
   name: string;
   summary?: string;
   websiteUrl?: string;
+  allowedLinkHosts?: readonly string[];
   envKey: string;
   agentId?: string;
   accent: string;

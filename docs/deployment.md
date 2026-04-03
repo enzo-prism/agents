@@ -33,6 +33,10 @@
    - opening the mobile checklist does not cover or clip the widget by default
    - changing agents on mobile updates the URL and closes the selector
    - the main panel stays widget-only across breakpoints
+7. Check widget link behavior:
+   - website links render as clickable markdown instead of `[blocked]`
+   - links only open approved client domains
+   - if widget client tools are configured in ElevenLabs, `redirectToExternalURL` or `redirectToPage` work
 
 ## ElevenLabs checklist
 
@@ -42,6 +46,7 @@ For each client agent:
 - widget auth is disabled
 - local development domains are allowlisted
 - production Vercel domains are allowlisted
+- widget link hosts align with the practice website host
 
 Official reference:
 [ElevenLabs widget customization docs](https://elevenlabs.io/docs/eleven-agents/customization/widget)

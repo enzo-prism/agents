@@ -114,6 +114,8 @@ Do:
 
 - `components/elevenlabs-widget.tsx`
   - widget wrapper and sizing
+  - per-client markdown link allowlist from the client website
+  - frontend client-tool registration for `redirectToExternalURL` and `redirectToPage`
 
 ## How to update or add a client
 
@@ -121,7 +123,8 @@ Do:
 2. Add the production website URL when available so the QA rail can link back to the live practice site
 3. Give it realistic checklist prompts tied to real business goals
 4. If needed, add its env override to `.env.example`
-5. Verify:
+5. Add `allowedLinkHosts` only if the agent needs extra approved domains beyond its main website
+6. Verify:
    - direct URL routing works
    - mobile selector still behaves cleanly
    - checklist content fits in both desktop and mobile surfaces

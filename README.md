@@ -110,6 +110,8 @@ The current official widget docs require the following for a working embed:
 - the agent must be public
 - widget auth must be disabled
 - local and production domains must be allowlisted
+- `markdown-link-allowed-hosts` should match the client website host so site links stay clickable
+- the frontend widget wrapper registers `redirectToExternalURL` and `redirectToPage` client tools
 
 Reference:
 [ElevenLabs widget customization docs](https://elevenlabs.io/docs/eleven-agents/customization/widget)

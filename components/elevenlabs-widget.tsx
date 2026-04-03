@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useEffectEvent, useRef } from "react";
 import { ArrowUpRight, CircleDashed, Sparkles } from "lucide-react";
 
 import type { ClientAgent } from "@/lib/client-agents";
@@ -8,7 +9,174 @@ type ElevenLabsWidgetProps = {
   client: ClientAgent;
 };
 
+type WidgetClientToolParameters = Record<string, unknown>;
+type WidgetClientToolHandler = (
+  parameters: WidgetClientToolParameters,
+) => Promise<unknown> | unknown;
+type WidgetCallEvent = CustomEvent<{
+  config?: {
+    clientTools?: Record<string, WidgetClientToolHandler>;
+  };
+}>;
+
+const ABSOLUTE_URL_PATTERN = /^[a-z]+:/i;
+
+function normalizeAllowedHost(value: string) {
+  const trimmed = value.trim();
+
+  if (!trimmed) {
+    return undefined;
+  }
+
+  const candidate = ABSOLUTE_URL_PATTERN.test(trimmed)
+    ? trimmed
+    : `https://${trimmed}`;
+
+  try {
+    const hostname = new URL(candidate).hostname
+      .replace(/\.$/, "")
+      .replace(/^www\./, "");
+
+    return hostname || undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+function buildAllowedLinkHosts(client: ClientAgent) {
+  const hosts = new Set<string>();
+
+  if (client.websiteUrl) {
+    const websiteHost = normalizeAllowedHost(client.websiteUrl);
+
+    if (websiteHost) {
+      hosts.add(websiteHost);
+    }
+  }
+
+  for (const value of client.allowedLinkHosts ?? []) {
+    const host = normalizeAllowedHost(value);
+
+    if (host) {
+      hosts.add(host);
+    }
+  }
+
+  return [...hosts];
+}
+
+function resolveClientUrl(
+  value: unknown,
+  client: ClientAgent,
+  allowedHosts: ReadonlySet<string>,
+) {
+  if (allowedHosts.size === 0) {
+    return undefined;
+  }
+
+  if (typeof value !== "string") {
+    return undefined;
+  }
+
+  const trimmed = value.trim();
+
+  if (!trimmed) {
+    return undefined;
+  }
+
+  try {
+    const nextUrl = ABSOLUTE_URL_PATTERN.test(trimmed)
+      ? new URL(trimmed)
+      : client.websiteUrl
+        ? new URL(trimmed, client.websiteUrl)
+        : undefined;
+
+    if (!nextUrl) {
+      return undefined;
+    }
+
+    if (nextUrl.protocol !== "https:" && nextUrl.protocol !== "http:") {
+      return undefined;
+    }
+
+    const hostname = normalizeAllowedHost(nextUrl.hostname);
+
+    if (!hostname) {
+      return undefined;
+    }
+
+    if (allowedHosts.size > 0 && !allowedHosts.has(hostname)) {
+      return undefined;
+    }
+
+    return nextUrl;
+  } catch {
+    return undefined;
+  }
+}
+
 export function ElevenLabsWidget({ client }: ElevenLabsWidgetProps) {
+  const mobileWidgetRef = useRef<HTMLElement | null>(null);
+  const desktopWidgetRef = useRef<HTMLElement | null>(null);
+  const allowedLinkHosts = buildAllowedLinkHosts(client);
+  const allowedLinkHostsValue =
+    allowedLinkHosts.length > 0 ? allowedLinkHosts.join(",") : undefined;
+
+  const registerClientTools = useEffectEvent((event: WidgetCallEvent) => {
+    const detail = event.detail;
+
+    if (!detail?.config) {
+      return;
+    }
+
+    const allowedHostSet = new Set(allowedLinkHosts);
+
+    const openResolvedUrl = (value: unknown) => {
+      const nextUrl = resolveClientUrl(value, client, allowedHostSet);
+
+      if (!nextUrl) {
+        throw new Error("Only approved website links can be opened.");
+      }
+
+      window.open(nextUrl.toString(), "_blank", "noopener,noreferrer");
+
+      return {
+        opened: true,
+        url: nextUrl.toString(),
+      };
+    };
+
+    detail.config.clientTools = {
+      ...detail.config.clientTools,
+      redirectToExternalURL: ({ url }) => openResolvedUrl(url),
+      redirectToPage: ({ path, url }) => openResolvedUrl(path ?? url),
+    };
+  });
+
+  useEffect(() => {
+    const widgets = [mobileWidgetRef.current, desktopWidgetRef.current].filter(
+      (value): value is HTMLElement => value !== null,
+    );
+
+    if (widgets.length === 0) {
+      return;
+    }
+
+    const handleWidgetCall = (event: Event) => {
+      registerClientTools(event as WidgetCallEvent);
+    };
+
+    for (const widget of widgets) {
+      widget.addEventListener("elevenlabs-convai:call", handleWidgetCall);
+    }
+
+    return () => {
+      for (const widget of widgets) {
+        widget.removeEventListener("elevenlabs-convai:call", handleWidgetCall);
+      }
+    };
+  }, [allowedLinkHostsValue, client.agentId, client.slug]);
+
   if (!client.agentId) {
     return (
       <div className="flex h-full min-h-[calc(100svh-20rem)] max-h-[40rem] flex-col justify-between rounded-[28px] border border-dashed border-border/80 bg-white/70 p-6 text-sm text-muted-foreground lg:min-h-[560px] lg:max-h-none">
@@ -68,9 +236,12 @@ export function ElevenLabsWidget({ client }: ElevenLabsWidgetProps) {
           <div className="relative z-10 flex w-full justify-center">
             <elevenlabs-convai
               key={`${client.slug}-${client.agentId}-mobile`}
+              ref={mobileWidgetRef}
               agent-id={client.agentId}
               variant="expanded"
               dismissible="false"
+              markdown-link-allowed-hosts={allowedLinkHostsValue}
+              markdown-link-include-www="true"
               avatar-orb-color-1={client.orbColors[0]}
               avatar-orb-color-2={client.orbColors[1]}
               action-text={`Test ${client.name}`}
@@ -86,9 +257,12 @@ export function ElevenLabsWidget({ client }: ElevenLabsWidgetProps) {
         <div className="pointer-events-none absolute inset-x-0 top-0 z-10 h-16 bg-gradient-to-b from-white/80 to-transparent" />
         <elevenlabs-convai
           key={`${client.slug}-${client.agentId}-desktop`}
+          ref={desktopWidgetRef}
           agent-id={client.agentId}
           variant="expanded"
           dismissible="false"
+          markdown-link-allowed-hosts={allowedLinkHostsValue}
+          markdown-link-include-www="true"
           avatar-orb-color-1={client.orbColors[0]}
           avatar-orb-color-2={client.orbColors[1]}
           action-text={`Test ${client.name}`}
